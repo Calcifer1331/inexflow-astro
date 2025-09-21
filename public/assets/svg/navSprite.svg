@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <defs>
+        <!-- Icon from
+    Feather Icon by Megumi Hano - https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+        <symbol viewBox="0 0 24 24" id="fe-users">
+            <!-- Icon from Feather Icon by Megumi Hano -
+        https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor" fill-rule="evenodd"
+                d="M8 13a3 3 0 1 1 0-6a3 3 0 0 1 0 6m8 0a3 3 0 1 1 0-6a3 3 0 0 1 0 6m-8 2a7.98 7.98 0 0 1 6 2.708V19H2v-1.292A7.98 7.98 0 0 1 8 15m8 4v-2.048l-.5-.567a10 10 0 0 0-1.25-1.193A8 8 0 0 1 16 15a7.98 7.98 0 0 1 6 2.708V19z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-user">
+            <!-- Icon from Feather Icon by Megumi Hano -
+        https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor"
+                d="M12 12a4 4 0 1 1 0-8a4 4 0 0 1 0 8m0 3c3.186 0 6.045.571 8 3.063V20H4v-1.937C5.955 15.57 8.814 15 12 15" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-bar-chart"><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor" fill-rule="evenodd"
+                d="M5 19h15a1 1 0 0 1 0 2H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 2 0zm5-4a1 1 0 0 1-2 0V6a1 1 0 1 1 2 0zm2 0V8a1 1 0 0 1 2 0v7a1 1 0 0 1-2 0m4-11a1 1 0 0 1 2 0v11a1 1 0 0 1-2 0z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-layer"><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor"
+                d="m6 8l6 3l6-3l-6-3zm6.489-4.884l7.993 4.076c.486.248.661.81.391 1.257a.97.97 0 0 1-.39.359l-7.994 4.076a1.09 1.09 0 0 1-.978 0L3.518 8.808c-.486-.248-.661-.81-.391-1.257a.97.97 0 0 1 .39-.359l7.994-4.076c.304-.155.674-.155.978 0m0 13.766a1.07 1.07 0 0 1-.978 0l-7.993-4.147c-.486-.252-.661-.824-.391-1.278a1 1 0 0 1 .39-.365a.82.82 0 0 1 .755 0l7.24 3.755c.303.158.673.158.977 0l7.239-3.755a.82.82 0 0 1 .754 0c.486.252.661.824.391 1.278a1 1 0 0 1-.39.365zm0 4a1.07 1.07 0 0 1-.978 0l-7.993-4.147c-.486-.252-.661-.824-.391-1.278a1 1 0 0 1 .39-.365a.82.82 0 0 1 .755 0l7.24 3.755c.303.158.673.158.977 0l7.239-3.755a.82.82 0 0 1 .754 0c.486.252.661.824.391 1.278a1 1 0 0 1-.39.365z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-boock"><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor"
+                d="m13 16.006l7-.047V5.992l-5.17.007l-1.814 1.814zm-2-8.193L9.179 6.038L4 6.003v9.956l7 .047zm-1-3.77L12 6l2-2l5.997-.008A2 2 0 0 1 22 5.989v9.97a2 2 0 0 1-1.986 2L14 18l-1.996 2L10 18l-6.014-.041a2 2 0 0 1-1.986-2V6.003a2 2 0 0 1 2-2z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-layout"><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor"
+                d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2m0 2v5h4V6zm0 7v5h4v-5zm6-7v12h10V6z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id='fe-logout'><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor" fill-rule="evenodd"
+                d="M3 5c0-1.1.9-2 2-2h8v2H5v14h8v2H5c-1.1 0-2-.9-2-2zm14.176 6L14.64 8.464l1.414-1.414l4.95 4.95l-4.95 4.95l-1.414-1.414L17.176 13H10.59v-2z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id='fe-truck'><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor" fill-rule="evenodd"
+                d="M10 18a3 3 0 0 1-6 0a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11.001C16.105 4 17 4.895 17 5.999L20 6c2 0 2 2.896 2 4v6a2 2 0 0 1-2 2h-1a3 3 0 0 1-6 0zM4 6v9h11V6zm13 2v4h3V8zm-1 11a1 1 0 1 0 0-2a1 1 0 0 0 0 2m-9 0a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-codepen"><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor" fill-rule="evenodd"
+                d="M22 15.047a1 1 0 0 1-.008.112l-.006.037l-.016.072q-.005.022-.013.042l-.022.063l-.02.042q-.013.03-.028.057l-.025.04a1 1 0 0 1-.108.135l-.035.034l-.049.04l-.038.03l-.015.01l-9.14 6.095a.86.86 0 0 1-.954 0l-9.14-6.094l-.014-.01a1 1 0 0 1-.088-.071q-.018-.016-.034-.034q-.023-.022-.043-.046a1 1 0 0 1-.066-.09a1 1 0 0 1-.054-.096l-.019-.042l-.022-.063q-.008-.02-.013-.042q-.009-.035-.015-.072l-.007-.037A1 1 0 0 1 2 15.047V8.953q0-.057.008-.112l.007-.037q.005-.037.015-.072l.013-.042a.8.8 0 0 1 .131-.254l.03-.037l.043-.046l.034-.034a1 1 0 0 1 .088-.07l.014-.01l9.14-6.095a.86.86 0 0 1 .954 0l9.14 6.094l.015.01l.038.03l.05.041l.034.034a.7.7 0 0 1 .108.136l.025.04l.029.056l.019.042l.022.063q.008.02.013.042q.01.035.016.072l.006.037a1 1 0 0 1 .008.112zM3.719 10.562v2.876L5.869 12zm7.422-2.088V4.465l-6.734 4.49l3.008 2.011zm8.452.48L12.86 4.465v4.009l3.726 2.492zM4.407 15.046l6.734 4.489v-4.009l-3.726-2.492zm8.453.48v4.009l6.733-4.49l-3.007-2.01zM12 9.966L8.96 12L12 14.033L15.04 12zm8.281 3.472v-2.876L18.131 12z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-apron"><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor"
+                d="m9.694 8l-1 6H6v6h12v-6h-2.694l-1-6zM10 3v3h4V3a1 1 0 0 1 2 0v3l1 6h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h1l1-6V3a1 1 0 1 1 2 0M8 16h8v2H8z" />
+        </symbol>
+        <symbol viewBox="0 0 24 24" id="fe-money"><!-- Icon
+            from Feather Icon by Megumi Hano -
+            https://github.com/feathericon/feathericon/blob/master/LICENSE -->
+            <path fill="currentColor"
+                d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2m14 2H6a2 2 0 0 1-2 2v6a2 2 0 0 1 2 2h12a2 2 0 0 1 2-2V9a2 2 0 0 1-2-2M8 9h2v6H8zm6 4a1 1 0 1 0 0-2a1 1 0 0 0 0 2m0 2a3 3 0 1 1 0-6a3 3 0 0 1 0 6" />
+        </symbol>
+    </defs>
+</svg>

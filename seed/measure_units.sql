@@ -1,0 +1,9 @@
+INSERT INTO app_3.measure_units (id, value) VALUES (1, 'lb');
+INSERT INTO app_3.measure_units (id, value) VALUES (2, 'kg');
+INSERT INTO app_3.measure_units (id, value) VALUES (3, 'unidad');
+INSERT INTO app_3.measure_units (id, value) VALUES (4, 'paquete');
+INSERT INTO app_3.measure_units (id, value) VALUES (5, 'kg');
+INSERT INTO app_3.measure_units (id, value) VALUES (6, 'hora');
+INSERT INTO app_3.measure_units (id, value) VALUES (7, 'minuto');
+INSERT INTO app_3.measure_units (id, value) VALUES (8, 'segundo');
+INSERT INTO app_3.measure_units (id, value) VALUES (9, 'lt');
