@@ -3,8 +3,9 @@ import ActionButton from "@/components/ActionButton.astro";
 import Alert from "@/components/Alert.astro";
 import Layout from "@/layouts/Layout.astro";
 import { currencyFormatter } from "@/lib/helpers/format";
+import { type ItemType } from "@/lib/server/db/schema";
 import { findAllByBusinessIdAndType } from "@/lib/server/db/item.respository";
-import { actions } from "astro:actions";
+import { actions, isInputError } from "astro:actions";
 
 const { authenticatedUser } = Astro.locals;
 
@@ -19,9 +20,34 @@ const products = await findAllByBusinessIdAndType(
 const alertProducts = products.filter(
     (product) => product.stock < product.minStock,
 );
+
+const deleteResult = Astro.getActionResult(actions.item.delete);
 ---
 
 <Layout title="Productos">
+    {
+        deleteResult && deleteResult.error && (
+            <Alert type="danger">
+                {isInputError(deleteResult?.error) ? (
+                    <span>Error al eliminar el producto:</span>
+                    <ul class="mb-0">
+                    {
+                        Object.values(deleteResult.error.fields).map((values) =>
+                            values.map((error) => <li>{error}</li>),
+                        )
+                    }
+                    </ul>
+                ) : (
+                    <span>Error al eliminar el producto!!</span>
+                )}
+            </Alert>
+        )
+    }
+    {
+        deleteResult && deleteResult.data?.success && (
+            <Alert type="success">Producto eliminado exitosamente!!</Alert>
+        )
+    }
     <ActionButton action="new" href="/tenants/products/new">
         Agregar Productos
     </ActionButton>
@@ -170,11 +196,15 @@ const alertProducts = products.filter(
                     </p>
                     <form
                         action={actions.item.delete}
-                        data-segment="/tenants/products"
                         id="form-delete-element"
                         method="POST"
                     >
                         <input type="hidden" name="id" />
+                        <input
+                            type="hidden"
+                            name="type"
+                            value={"product" as ItemType}
+                        />
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -213,9 +243,11 @@ const alertProducts = products.filter(
             ))
     }
     <script>
-        const exampleModal = document.getElementById("exampleModal");
+        document.addEventListener("astro:page-load", () => {
+            const exampleModal = document.getElementById("exampleModal");
 
-        if (exampleModal) {
+            if (!exampleModal) return;
+
             const modalDeleteForm: HTMLFormElement | null =
                 exampleModal.querySelector(
                     ".modal-body form#form-delete-element",
@@ -223,7 +255,6 @@ const alertProducts = products.filter(
 
             if (!modalDeleteForm) return;
 
-            const segment = modalDeleteForm.getAttribute("data-segment");
             const inputId: HTMLInputElement | null =
                 modalDeleteForm.querySelector("input[name='id']");
 
@@ -239,12 +270,13 @@ const alertProducts = products.filter(
 
                 modalMessage.textContent = `¿Estas seguro de que deseas eliminar ${name}?`;
 
-                // modalDeleteForm.action = `${segment}/${id}`;
                 inputId.value = id;
             });
             exampleModal.addEventListener("hide.bs.modal", () => {
-                // modalDeleteForm.action = "";
+                if (!modalMessage || !inputId) return;
+                modalMessage.textContent = "";
+                inputId.value = "";
             });
-        }
+        });
     </script>
 </Layout>

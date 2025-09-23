@@ -2,68 +2,41 @@
 import Alert from "@/components/Alert.astro";
 import FieldText from "@/components/FieldText.astro";
 import Layout from "@/layouts/Layout.astro";
-import { findByIdAndBusinessIdAndTypeForEdit } from "@/lib/server/db/item.respository";
 import { isInputError, actions } from "astro:actions";
 import { type ItemType } from "@lib/schemas/item.schema";
-import { findAll } from "@/lib/server/db/measureUnit.respository";
 import SelectField from "@/components/SelectField.astro";
+import { findAll } from "@/lib/server/db/measureUnit.respository";
 const { authenticatedUser } = Astro.locals;
 
 if (authenticatedUser.role !== "businessman")
     return new Response(null, { status: 403 });
 
-const parseId = parseInt(Astro.params.id ?? "0");
-
-if (!parseId) return new Response(null, { status: 404 });
-
-const [product,measureUnits] = await Promise.all([
-    findByIdAndBusinessIdAndTypeForEdit(parseId,authenticatedUser.businessId,"product") ,
-    findAll()
-]);
-
-const result = Astro.getActionResult(actions.item.edit);
+const result = Astro.getActionResult(actions.item.create);
 const inputErrors = isInputError(result?.error) ? result.error.fields : {};
 
-if (!product) return new Response(null, { status: 404 });
-
-const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
+const measureUnits = await findAll();
 ---
 
 <Layout title="Producto">
     {
-        result && result.error && (
-            <Alert type="danger">
-                    {!isInputError(result?.error) ? (
-                        result.error.message
-                    ) : (
-                        <span>Error al editar el Producto:</span>
-                        <ul class="mb-0">
-                            {inputErrors.id &&
-                                inputErrors.id.map((error) => (
-                                    <li> {error}</li>
-                                ))}
-                            {inputErrors.type &&
-                                inputErrors.type.map((error) => (
-                                    <li> {error}</li>
-                                ))}
-                        </ul>
-                    )}
-            </Alert>
+        result && result.error && !isInputError(result?.error) && (
+            <Alert type="danger">{result.error.message}</Alert>
         )
     }
     {
         result && result.data && (
-            <Alert type="success">{name} fue actualuzado exitosamente!!</Alert>
+            <Alert type="success">
+                Producto {result.data.name} creado exitosa mente.
+            </Alert>
         )
     }
     <form
-        action={actions.item.edit}
+        action={actions.item.create}
         method="POST"
         class="needs-validation"
         novalidate
     >
         <div class="row">
-            <input type="hidden" name="id" value={parseId} />
             <input type="hidden" name="type" value={"product" as ItemType} />
             <div class="col-12 col-md-6">
                 <FieldText
@@ -72,7 +45,6 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     name="name"
                     min="5"
                     max="250"
-                    value={name}
                     required
                     errors={inputErrors.name}
                 />
@@ -82,7 +54,6 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     name="cost"
                     min="0.00"
                     step="0.01"
-                    value={cost}
                     required
                     errors={inputErrors.cost}
                 />
@@ -92,7 +63,6 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     name="sellingPrice"
                     min="0.00"
                     step="0.01"
-                    value={sellingPrice}
                     errors={inputErrors.sellingPrice}
                 />
             </div>
@@ -102,7 +72,6 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     type="number"
                     name="stock"
                     min="1"
-                    value={stock}
                     required
                     errors={inputErrors.stock}
                 />
@@ -111,9 +80,14 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     type="number"
                     name="minStock"
                     min="1"
-                    value={minStock}
                     errors={inputErrors.minStock}
                 />
+                <!-- <FieldText
+                    label="Measure Unir"
+                    type="number"
+                    name="measureUnitId"
+                    min="1"
+                    /> -->
                 <SelectField
                     label="Unidad de medida"
                     name="measureUnitId"
@@ -121,7 +95,6 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     options={measureUnits.map(({ id, value }) => ({
                         value: id,
                         text: value,
-                        selected: id === measureUnitId
                     }))}
                 />
             </div>

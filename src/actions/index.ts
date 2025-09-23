@@ -1,5 +1,5 @@
-import auth from "./auth"
-import item from './tenants/products'
+import auth from "./auth.action"
+import item from './tenants/item.action'
 
 export const server = {
     auth,

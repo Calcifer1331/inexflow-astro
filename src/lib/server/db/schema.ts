@@ -40,7 +40,7 @@ export type NewBusiness = InferInsertModel<typeof business>;
  * @property businessId - Id del negocio al que pertenece
  */
 export const tenantFields = {
-	businessId: mysqlUUID().references(() => business.id, { onDelete: 'cascade' })
+	businessId: mysqlUUID().notNull().references(() => business.id, { onDelete: 'cascade' })
 }
 /**
  * usuarios del sistema
@@ -59,6 +59,7 @@ export const user = mysqlTable('users', {
 export type User = InferSelectModel<typeof user>;
 export type NewUser = InferInsertModel<typeof user>;
 
+export type UserSession = Pick<User, 'id' | 'email' | 'name' | 'isActive' | 'role' | 'businessId'>
 
 type AdminSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
 	role: 'admin';
@@ -70,19 +71,7 @@ type BusinessmanSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
 	businessId: UUID; // obligatorio
 };
 
-export type UserSession = AdminSession | BusinessmanSession;
-
-function printUser(user: UserSession) {
-	if (user.role === 'businessman') {
-		// aquí TS sabe que businessId es string
-		console.log('Business ID:', user.businessId.toUpperCase());
-	} else {
-		// aquí TS sabe que businessId es null
-		console.log('Es admin, no tiene negocio');
-	}
-}
-
-
+export type StrictUserSession = AdminSession | BusinessmanSession;
 
 /**
  * Unidades de medidas del sistema
@@ -111,7 +100,9 @@ export const item = mysqlTable('items', {
 });
 
 export type Item = InferSelectModel<typeof item>;
+export type ItemType = Item['type'];
 export type NewItem = InferInsertModel<typeof item>;
+export type EditItem = Partial<Pick<Item, 'cost' | 'measureUnitId' | 'minStock' | 'name' | 'stock' | 'sellingPrice'>>
 /**
  * Servicios de entrada y salida
  */

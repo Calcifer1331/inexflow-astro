@@ -1,0 +1,43 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"select"> {
+    label: string;
+    options: { value: string | number; text: string; selected?: boolean }[];
+    errors?: string[];
+}
+
+let { label, id, name, options, errors, ...attrs } = Astro.props as Props;
+
+id ??= name && `input-${name}`;
+---
+
+<div class="form-floating mb-3">
+    <select
+        {name}
+        {id}
+        {...attrs}
+        class:list={["form-select", errors && "is-invalid"]}
+    >
+        {
+            options &&
+                options.map(({ text, value, selected }) => (
+                    <option {value} {selected}>
+                        {text}
+                    </option>
+                ))
+        }
+    </select>
+    <label for={id}>{label}</label>
+    {
+        errors && (
+            <div class="invalid-feedback">
+                <ul>
+                    {errors.map((text) => (
+                        <li>{text}</li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+</div>

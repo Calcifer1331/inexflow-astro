@@ -1,5 +1,5 @@
 import { z } from "astro:schema";
-import { stringBuilder, dateBuilder, booleanBuilder, numBuilder, auditSchema, tenant } from "./common.schema";
+import { stringBuilder, booleanBuilder, numBuilder, auditSchema, tenant } from "./common.schema";
 
 export const userRoleValues = ['admin', 'businessman'] as const;
 
@@ -14,6 +14,13 @@ export const userSchema = z.object({
     isActive: booleanBuilder('El estado de activo'),
 }).merge(auditSchema).merge(tenant);
 
+
+export const loginSchema = userSchema.pick({
+    email: true,
+    password: true
+});
+
+export type LoginSchema = z.infer<typeof loginSchema>;
 
 export type UserSchema = z.infer<typeof userSchema>;
 

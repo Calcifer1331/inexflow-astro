@@ -36,7 +36,7 @@ import type { UUID } from 'node:crypto';
 //     return [emailExists.length > 0, usernameExists.length > 0];
 // }
 
-export async function authenticateUser(email: string, password: string) {
+export async function authenticateUser(email: string, password: string): Promise<UserSession | null> {
     const [ressult] = await db.select({
         id: user.id,
         name: user.name,

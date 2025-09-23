@@ -1,4 +1,4 @@
-import type { UserSession } from "@db/schema";
+import type { StrictUserSession, UserSession } from "@db/schema";
 
 declare global {
     namespace App {
@@ -6,13 +6,13 @@ declare global {
          * Define los tipos de la sesison
          */
         interface SessionData {
-            user: UserSession;
+            user: StrictUserSession;
         }
         interface Locals {
             /**
              * Esta variable debe ser validada en el middleware, y solo puede ser usada en los paths de /admins y /tenants
              */
-            authenticatedUser: UserSession
+            authenticatedUser: StrictUserSession
         }
     }
 

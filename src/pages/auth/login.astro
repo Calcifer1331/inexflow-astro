@@ -26,9 +26,9 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
                         {
                             result &&
                                 (result.error || !result.data.success) && (
-                                    <Alert>
+                                    <Alert type="danger">
                                         {result.error
-                                            ? "Error al iniciar session"
+                                            ? "Error al iniciar session!!"
                                             : result.data.message}
                                     </Alert>
                                 )
@@ -41,21 +41,23 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
                             novalidate
                         >
                             <FieldText
-                                transition:persist
                                 label="Correo"
                                 type="email"
                                 name="email"
                                 placeholder="name@example.com"
                                 errors={inputErrors.email}
+                                min="1"
+                                max="250"
                                 required
                             />
                             <FieldText
-                                transition:persist
                                 label="Contraseña"
                                 type="password"
                                 name="password"
                                 placeholder="4fmv5yvtjgft"
                                 errors={inputErrors.password}
+                                min="8"
+                                max="250"
                                 required
                             />
                         </form>

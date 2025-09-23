@@ -1,11 +1,11 @@
 import { db } from './index';
-import type { Item, NewItem } from './schema';
+import type { EditItem, Item, ItemType, NewItem } from './schema';
 import { item, measureUnit } from './schema';
 import { eq, ilike, and } from 'drizzle-orm/mysql-core/expressions';
 import type { UUID } from 'node:crypto';
 
 
-export async function findAllByBusinessIdAndType(businessId: UUID, type: Item['type']) {
+export async function findAllByBusinessIdAndType(businessId: UUID, type: ItemType) {
     return await db.select({
         id: item.id,
         name: item.name,
@@ -26,7 +26,7 @@ export async function findAllByBusinessIdAndType(businessId: UUID, type: Item['t
         )
 }
 
-export async function findByIdAndBusinessIdAndTypeForEdit(id: number, businessId: UUID, type: Item['type']) {
+export async function findByIdAndBusinessIdAndTypeForEdit(id: number, businessId: UUID, type: ItemType) {
     return await db.select({
         name: item.name,
         cost: item.cost,
@@ -45,7 +45,7 @@ export async function findByIdAndBusinessIdAndTypeForEdit(id: number, businessId
             )
         ).then(rest => rest[0] ? rest[0] : null)
 }
-export async function findByIdAndBusinessIdAndTypeForShow(id: number, businessId: UUID, type: Item['type']) {
+export async function findByIdAndBusinessIdAndTypeForShow(id: number, businessId: UUID, type: ItemType) {
     return await db.select({
         name: item.name,
         cost: item.cost,
@@ -67,23 +67,26 @@ export async function findByIdAndBusinessIdAndTypeForShow(id: number, businessId
             )
         ).then(rest => rest[0] ? rest[0] : null)
 }
-export async function updateProductByIdAndBusinessIdAndType(id: number, businessId: UUID, data: Partial<Item>) {
+export async function create(data: NewItem) {
+    await db.insert(item).values(data)
+}
+export async function updateByIdAndBusinessIdAndType(id: number, businessId: UUID, type: ItemType, data: EditItem) {
     await db.update(item)
         .set(data)
         .where(
             and(
                 eq(item.businessId, businessId),
-                eq(item.type, 'product'),
+                eq(item.type, type),
                 eq(item.id, id)
             )
         );
 }
-export async function deleteProductByIdAndBusinessIdAndType(id: number, businessId: UUID) {
+export async function deleteByIdAndBusinessIdAndType(id: number, businessId: UUID, type: ItemType) {
     await db.delete(item)
         .where(
             and(
                 eq(item.businessId, businessId),
-                eq(item.type, 'product'),
+                eq(item.type, type),
                 eq(item.id, id)
             )
         );
