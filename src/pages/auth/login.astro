@@ -3,11 +3,12 @@ import Layout from "@lay/Default.astro";
 import FieldText from "@comp/FieldText.astro";
 import { actions } from "astro:actions";
 import { isInputError } from "astro:actions";
+import Alert from "@/components/Alert.astro";
 
 const result = Astro.getActionResult(actions.auth.login);
 
-if (result && !result.error && result.data?.success) {
-    return Astro.redirect("/");
+if (result && !result.error && result.data.success) {
+    return Astro.redirect(result.data.message);
 }
 
 const inputErrors = isInputError(result?.error) ? result.error.fields : {};
@@ -23,20 +24,14 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
                             Iniciar Sesión
                         </h2>
                         {
-                            result?.error && (
-                                <div
-                                    class="alert alert-danger alert-dismissible fade show"
-                                    role="alert"
-                                >
-                                    Error al iniciar session
-                                    <button
-                                        type="button"
-                                        class="btn-close"
-                                        data-bs-dismiss="alert"
-                                        aria-label="Cerrar"
-                                    />
-                                </div>
-                            )
+                            result &&
+                                (result.error || !result.data.success) && (
+                                    <Alert>
+                                        {result.error
+                                            ? "Error al iniciar session"
+                                            : result.data.message}
+                                    </Alert>
+                                )
                         }
                         <form
                             method="POST"

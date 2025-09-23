@@ -1,0 +1,120 @@
+---
+import ActionButton from "@/components/ActionButton.astro";
+import Alert from "@/components/Alert.astro";
+import FieldText from "@/components/FieldText.astro";
+import Layout from "@/layouts/Layout.astro";
+import { currencyFormatter, dateFormatter } from "@/lib/helpers/format";
+import { findByIdAndBusinessIdAndTypeForEdit } from "@/lib/server/db/item.respository";
+import { isInputError } from "astro:actions";
+import { actions } from "astro:actions";
+
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const parseId = parseInt(Astro.params.id ?? "0");
+
+if (!parseId) return new Response(null, { status: 404 });
+
+const product = await findByIdAndBusinessIdAndTypeForEdit(
+    parseId,
+    authenticatedUser.businessId,
+    "product",
+);
+
+const result = Astro.getActionResult(actions.item.edit);
+const inputErrors = isInputError(result?.error) ? result.error.fields : {};
+
+if (!product) return new Response(null, { status: 404 });
+
+const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
+---
+
+<Layout title="Producto">
+    {
+        result && result.error && !isInputError(result?.error) && (
+            <Alert type="danger">{result.error.message}</Alert>
+        )
+    }
+    {
+        result && result.data && (
+            <Alert type="success">{name} fue actualuzado exitosamente!!</Alert>
+        )
+    }
+    <form
+        action={actions.item.edit}
+        method="POST"
+        class="needs-validation"
+        novalidate
+    >
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <FieldText
+                    label="Nombre"
+                    type="text"
+                    name="name"
+                    min="5"
+                    max="250"
+                    value={name}
+                    required
+                    errors={inputErrors.name}
+                />
+                <FieldText
+                    label="Costo"
+                    type="number"
+                    name="cost"
+                    min="0.00"
+                    step="0.01"
+                    value={cost}
+                    required
+                    errors={inputErrors.cost}
+                />
+                <FieldText
+                    label="Precio de Venta"
+                    type="number"
+                    name="sellingPrice"
+                    min="0.00"
+                    step="0.01"
+                    value={sellingPrice}
+                    errors={inputErrors.sellingPrice}
+                />
+            </div>
+            <div class="col-12 col-md-6">
+                <FieldText
+                    label="Stock"
+                    type="number"
+                    name="stock"
+                    min="1"
+                    value={stock}
+                    required
+                    errors={inputErrors.stock}
+                />
+                <FieldText
+                    label="Stock minimo"
+                    type="number"
+                    name="minStock"
+                    min="1"
+                    value={minStock}
+                    errors={inputErrors.minStock}
+                />
+                <FieldText
+                    label="Measure Unir"
+                    type="number"
+                    name="measureUnitId"
+                    min="1"
+                    value={measureUnitId}
+                    errors={inputErrors.measureUnitId}
+                />
+            </div>
+
+            <div class="d-grid">
+                <button
+                    type="submit"
+                    class="btn btn-success mx-auto"
+                    style="width: 35%;">Registrar</button
+                >
+            </div>
+        </div>
+    </form>
+</Layout>

@@ -21,6 +21,7 @@
       "@conf/*": ["src/config/*"],
       "@lib/*": ["src/lib/*"],
       "@db/*": ["src/lib/server/db/*"],
+      "@helper/*": ["src/lib/helpers/*"],
     }
   }
 }

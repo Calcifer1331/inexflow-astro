@@ -1,7 +1,7 @@
 import { mysqlTable, varchar, timestamp, mysqlEnum, decimal, json, boolean, datetime, smallint, tinyint, primaryKey, check, unique, index, char, serial, foreignKey, bigint, int, date } from 'drizzle-orm/mysql-core'; // Asegúrate de que la ruta sea correcta
 import { type InferSelectModel, type InferInsertModel, sql, SQL, TableAliasProxyHandler } from 'drizzle-orm';
 import mysqlUUID from "./uuid"
-import { randomUUID } from 'node:crypto';
+import { randomUUID, type UUID } from 'node:crypto';
 
 
 /**
@@ -58,7 +58,30 @@ export const user = mysqlTable('users', {
 
 export type User = InferSelectModel<typeof user>;
 export type NewUser = InferInsertModel<typeof user>;
-export type UserSession = Pick<User, 'id' | 'email' | 'name' | 'role' | 'businessId'>
+
+
+type AdminSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
+	role: 'admin';
+	businessId: null; // siempre null
+};
+
+type BusinessmanSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
+	role: 'businessman';
+	businessId: UUID; // obligatorio
+};
+
+export type UserSession = AdminSession | BusinessmanSession;
+
+function printUser(user: UserSession) {
+	if (user.role === 'businessman') {
+		// aquí TS sabe que businessId es string
+		console.log('Business ID:', user.businessId.toUpperCase());
+	} else {
+		// aquí TS sabe que businessId es null
+		console.log('Es admin, no tiene negocio');
+	}
+}
+
 
 
 /**
@@ -89,7 +112,6 @@ export const item = mysqlTable('items', {
 
 export type Item = InferSelectModel<typeof item>;
 export type NewItem = InferInsertModel<typeof item>;
-
 /**
  * Servicios de entrada y salida
  */

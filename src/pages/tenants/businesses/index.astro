@@ -1,0 +1,40 @@
+---
+import ActionButton from "@comp/ActionButton.astro";
+import Layout from "@/layouts/Layout.astro";
+import { findById } from "@db/business.respository";
+import { dateFormatter } from "@helper/format";
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const business = await findById(authenticatedUser.businessId);
+
+if (!business) return new Response(null, { status: 403 });
+---
+
+<Layout title="Negocio">
+    <h1>{business.name}</h1>
+    <p><strong>Identificador:</strong> {business.id}</p>
+    <p><strong>Numero de Telefono:</strong> {business.phone}</p>
+    <p>
+        <strong>Creado:</strong>
+        {dateFormatter.format(business.createdAt)}
+    </p>
+    <p>
+        <strong>Ultima actualizacion:</strong>
+        {dateFormatter.format(business.updatedAt)}
+    </p>
+    <ActionButton action="edit" href="/tenants/businesses/edit">
+        Editar
+    </ActionButton>
+    <ActionButton action="delete" href="/tenants/businesses/edit">
+        Eliminar
+    </ActionButton>
+    <ActionButton action="new" href="/tenants/businesses/edit">
+        Agregar
+    </ActionButton>
+    <ActionButton action="show" href="/tenants/businesses/edit">
+        Ver
+    </ActionButton>
+</Layout>

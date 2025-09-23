@@ -1,0 +1,104 @@
+---
+const pathname = Astro.url.pathname;
+const user = await Astro.session?.get("user");
+
+interface Link {
+    href: string;
+    svg: string;
+    label: string;
+}
+const links: Link[] = [
+    {
+        href: "/profile",
+        svg: "fe-user",
+        label: user?.name ?? "No hay nombre",
+    },
+];
+
+if (user)
+    if (user.role === "admin") {
+        links.push({
+            href: "/admins/users",
+            svg: "fe-users",
+            label: "Usuarios",
+        });
+    } else if (user.role === "businessman") {
+        links.push(
+            {
+                href: "/tenants/businesses",
+                svg: "fe-bar-chart",
+                label: "Negocio",
+            },
+            {
+                href: "/tenants/employees",
+                svg: "fe-users",
+                label: "Empleados",
+            },
+            {
+                href: "/tenants/purchases",
+                svg: "fe-boock",
+                label: "Compras",
+            },
+            {
+                href: "/tenants/orders",
+                svg: "fe-boock",
+                label: "Ordenes",
+            },
+            {
+                href: "/tenants/products",
+                svg: "fe-layer",
+                label: "Productos",
+            },
+            {
+                href: "/tenants/expense-services",
+                svg: "fe-apron",
+                label: "Servicio-salida",
+            },
+            {
+                href: "/tenants/supplies",
+                svg: "fe-codepen",
+                label: "Suministros",
+            },
+            {
+                href: "/tenants/customers",
+                svg: "fe-users",
+                label: "Clientes",
+            },
+            {
+                href: "/tenants/providers",
+                svg: "fe-truck",
+                label: "Proveedores",
+            },
+            {
+                href: "/tenants/income-services",
+                svg: "fe-money",
+                label: "Servicio-entrada",
+            },
+        );
+    }
+---
+
+<nav class="nav nav-pills flex-column">
+    {
+        links.map(({ href, label, svg }) => {
+            const active = pathname.includes(href);
+            return (
+                <a
+                    class:list={["nav-link my-1", active && "active"]}
+                    aria-current={active ? "page" : undefined}
+                    href={active ? "#" : href}
+                >
+                    <svg
+                        class="bi flex-shrink-0"
+                        role="img"
+                        width="24"
+                        height="24"
+                    >
+                        <use href={`/assets/svg/navSprite.svg#${svg}`} />
+                    </svg>
+                    {label}
+                </a>
+            );
+        })
+    }
+</nav>

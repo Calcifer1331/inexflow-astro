@@ -1,0 +1,31 @@
+---
+import { actions } from "astro:actions";
+
+type Action = "new" | "show" | "edit" | "delete";
+const icons: Record<Action, string> = {
+    delete: "fe-trash",
+    new: "fe-plus",
+    edit: "fe-edit",
+    show: "fe-info",
+};
+interface Props {
+    href: string;
+    action: Action;
+}
+let { href, action } = Astro.props as Props;
+---
+
+<a
+    {href}
+    class:list={[
+        "btn d-flex gap-1 w-fit align-items-center float-none",
+        (action === "new" || action === "show") && "btn-outline-primary",
+        action === "edit" && "btn-primary",
+        action === "delete" && "btn-danger",
+    ]}
+>
+    <slot />
+    <svg class="bi flex-shrink-0" role="img" width="20" height="20">
+        <use href={`/assets/svg/miscellaniaSprite.svg#${icons[action]}`}></use>
+    </svg>
+</a>

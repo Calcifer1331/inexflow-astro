@@ -1,0 +1,250 @@
+---
+import ActionButton from "@/components/ActionButton.astro";
+import Alert from "@/components/Alert.astro";
+import Layout from "@/layouts/Layout.astro";
+import { currencyFormatter } from "@/lib/helpers/format";
+import { findAllByBusinessIdAndType } from "@/lib/server/db/item.respository";
+import { actions } from "astro:actions";
+
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const products = await findAllByBusinessIdAndType(
+    authenticatedUser.businessId,
+    "product",
+);
+
+const alertProducts = products.filter(
+    (product) => product.stock < product.minStock,
+);
+---
+
+<Layout title="Productos">
+    <ActionButton action="new" href="/tenants/products/new">
+        Agregar Productos
+    </ActionButton>
+
+    <div class="table-responsive">
+        <table
+            id="showtable"
+            class="table table-striped table-hover table-bordered"
+        >
+            <thead class="table-secondary">
+                <tr>
+                    <th></th>
+                    <th>Nombre</th>
+                    <th>Costo</th>
+                    <th>Precio de Venta</th>
+                    <th>Cantidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {
+                    products.length ? (
+                        products.map(
+                            (
+                                {
+                                    cost,
+                                    id,
+                                    name,
+                                    sellingPrice,
+                                    stock,
+                                    measureUnit,
+                                },
+                                i,
+                            ) => (
+                                <tr>
+                                    <td>{i + 1}</td>
+                                    <td>{name}</td>
+                                    <td>
+                                        {currencyFormatter.format(
+                                            parseFloat(cost),
+                                        )}
+                                    </td>
+                                    <td>
+                                        {sellingPrice
+                                            ? currencyFormatter.format(
+                                                  parseFloat(sellingPrice),
+                                              )
+                                            : "--"}
+                                    </td>
+                                    <td>
+                                        {stock} {measureUnit}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a
+                                                class="btn btn-outline-primary"
+                                                type="button"
+                                                title="Ver informacion de Elemento"
+                                                href={`/tenants/products/${id}`}
+                                            >
+                                                <svg
+                                                    class="bi flex-shrink-0"
+                                                    role="img"
+                                                    aria-label="Ver informacion de Elemento"
+                                                    width="24"
+                                                    height="24"
+                                                >
+                                                    <use href="/assets/svg/miscellaniaSprite.svg#fe-info" />
+                                                </svg>
+                                            </a>
+                                            <a
+                                                class="btn btn-primary"
+                                                type="button"
+                                                title="Editra Elemento"
+                                                href={`/tenants/products/${id}/edit`}
+                                            >
+                                                <svg
+                                                    class="bi flex-shrink-0"
+                                                    role="img"
+                                                    aria-label="Editra Elemento"
+                                                    width="24"
+                                                    height="24"
+                                                >
+                                                    <use href="/assets/svg/miscellaniaSprite.svg#fe-edit" />
+                                                </svg>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="btn btn-danger"
+                                                title="Eliminar Elemento"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal"
+                                                data-bs-id={id}
+                                                data-bs-name={name}
+                                            >
+                                                <svg
+                                                    class="bi flex-shrink-0"
+                                                    role="img"
+                                                    aria-label="Eliminar Elemento"
+                                                    width="24"
+                                                    height="24"
+                                                >
+                                                    <use href="/assets/svg/miscellaniaSprite.svg#fe-trash" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ),
+                        )
+                    ) : (
+                        <tr>
+                            <td colspan="9" class="text-center">
+                                No hay elementos registrados.
+                            </td>
+                        </tr>
+                    )
+                }
+            </tbody>
+        </table>
+    </div>
+    <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Eliminar producto
+                    </h1>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-message h6"></p>
+                    <p class="text-danger">
+                        Al eliminar un producto toda informacio relacionada a
+                        esta sera eliminada permanentemnte
+                    </p>
+                    <form
+                        action={actions.item.delete}
+                        data-segment="/tenants/products"
+                        id="form-delete-element"
+                        method="POST"
+                    >
+                        <input type="hidden" name="id" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="submit"
+                        form="form-delete-element"
+                        class="btn btn-danger d-flex align-items-center gap-2"
+                    >
+                        Eliminar
+                        <svg
+                            class="bi flex-shrink-0"
+                            role="img"
+                            aria-label="Eliminar Elemento"
+                            width="20"
+                            height="20"
+                        >
+                            <use
+                                href="/assets/svg/miscellaniaSprite.svg#fe-trash"
+                            ></use>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {
+        alertProducts.length &&
+            alertProducts.map(({ id, name }) => (
+                <Alert type="danger">
+                    alerta{" "}
+                    <a href={`/tenants/products/${id}`} class="alert-link">
+                        {name}
+                    </a>{" "}
+                    tiene poco
+                </Alert>
+            ))
+    }
+    <script>
+        const exampleModal = document.getElementById("exampleModal");
+
+        if (exampleModal) {
+            const modalDeleteForm: HTMLFormElement | null =
+                exampleModal.querySelector(
+                    ".modal-body form#form-delete-element",
+                );
+
+            if (!modalDeleteForm) return;
+
+            const segment = modalDeleteForm.getAttribute("data-segment");
+            const inputId: HTMLInputElement | null =
+                modalDeleteForm.querySelector("input[name='id']");
+
+            const modalMessage = exampleModal.querySelector(
+                ".modal-body .modal-message",
+            );
+
+            exampleModal.addEventListener("show.bs.modal", (event) => {
+                if (!modalMessage || !inputId) return;
+                const button = event.relatedTarget;
+                const id = button.getAttribute("data-bs-id");
+                const name = button.getAttribute("data-bs-name");
+
+                modalMessage.textContent = `¿Estas seguro de que deseas eliminar ${name}?`;
+
+                // modalDeleteForm.action = `${segment}/${id}`;
+                inputId.value = id;
+            });
+            exampleModal.addEventListener("hide.bs.modal", () => {
+                // modalDeleteForm.action = "";
+            });
+        }
+    </script>
+</Layout>

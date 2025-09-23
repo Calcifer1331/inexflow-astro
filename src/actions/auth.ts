@@ -30,7 +30,7 @@ export const auth = {
 
                 return {
                     success: true,
-                    message: ''
+                    message: user.role === 'businessman' ? '/tenants/businesses' : '/admins'
                 }
             } catch (error) {
                 console.error("Login Error:", error);

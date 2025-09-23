@@ -1,0 +1,42 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { findById } from "@db/business.respository";
+import { dateFormatter } from "@helper/format";
+import FieldText from "@/components/FieldText.astro";
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const business = await findById(authenticatedUser.businessId);
+
+if (!business) return new Response(null, { status: 404 });
+---
+
+<Layout title="Negocio">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <FieldText label="Nombre" name="name" value={business.name} />
+            <FieldText
+                label="Numero de Telefono"
+                type="tel"
+                name="phone"
+                value={business.phone}
+            />
+        </div>
+        <div class="col-12 col-md-6">
+            <FieldText
+                label="Fecha de Creación"
+                value={dateFormatter.format(business.createdAt)}
+                disabled
+                readonly
+            />
+            <FieldText
+                label="Fecha de Actualización"
+                value={dateFormatter.format(business.updatedAt)}
+                disabled
+                readonly
+            />
+        </div>
+    </div>
+</Layout>
