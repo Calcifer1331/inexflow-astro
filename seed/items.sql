@@ -1,12 +1,14 @@
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (1, 'Pollo', 'supply', 0.00, null, 8, 3, 1, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (2, 'Arroz', 'supply', 0.00, null, 8, 4, 1, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (3, 'Yuca', 'supply', 0.00, null, 4, 4, 1, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (4, 'Otoe', 'supply', 0.00, null, 8, 4, 1, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (5, 'Vaso de sopa', 'supply', 0.00, null, 8, 4, 4, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (6, 'Cucharas', 'supply', 0.00, null, 8, 8, 4, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (7, 'Sopa de Pollo con arroz', 'product', 0.00, null, 15, 3, 3, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (8, 'Sopa de Pollo', 'product', 0.00, null, 10, 15, 4, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (9, 'Sopa de Pata', 'product', 0.00, null, 8, 15, 3, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (10, 'Sopa de Pata con arroz', 'product', 0.00, null, 6, 3, 3, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
-INSERT INTO app_3.items (id, name, type, cost, selling_price, stock, min_stock, measure_unit_id, created_at, updated_at, business_id) VALUES (11, 'Limonada', 'product', 0.00, null, 20, 15, 3, '2025-09-19 15:44:46', '2025-09-19 15:44:46', 0x9311744C3746350284C9D06E8B5EA2D6);
+INSERT INTO `items`
+(`name`, `type`, `cost`, `selling_price`, `stock`, `min_stock`, `measure_unit_id`, `created_at`, `updated_at`, `business_id`)
+VALUES
+-- Ingredientes para sopas (suministros)
+('Pollo', 'supply', 5.50, NULL, 50.000, 5.000, 1, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-',''))),
+('Verduras mixtas', 'supply', 2.00, NULL, 30.000, 5.000, 1, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-',''))),
+('Fideos', 'supply', 1.20, NULL, 100.000, 10.000, 1, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-',''))),
+('Caldo de pollo', 'supply', 0.80, NULL, 200.000, 20.000, 2, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-',''))),
+('Sal', 'supply', 0.05, NULL, 50.000, 5.000, 1, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-',''))),
 
+-- Productos terminados (sopas listas para venta)
+('Sopa de pollo', 'product', 1.50, 3.50, 0.000, 0.000, 3, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-',''))),
+('Sopa de verduras', 'product', 1.20, 3.00, 0.000, 0.000, 3, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-',''))),
+('Sopa instantánea', 'product', 0.80, 2.50, 0.000, 0.000, 3, NOW(), NOW(), UNHEX(REPLACE(UUID(),'-','')));

@@ -97,8 +97,8 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
                                               )
                                             : "--"}
                                     </td>
-                                    <td>
-                                        {stock} {measureUnit}
+                                    <td title={`${parseFloat(stock)} ${measureUnit?.name}`}>
+                                        {parseFloat(stock)} {measureUnit?.symbol}
                                     </td>
                                     <td>
                                         <div class="btn-group">

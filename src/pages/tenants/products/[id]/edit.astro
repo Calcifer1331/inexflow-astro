@@ -102,7 +102,7 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     type="number"
                     name="stock"
                     min="1"
-                    value={stock}
+                    value={parseFloat(stock)}
                     required
                     errors={inputErrors.stock}
                 />
@@ -111,16 +111,16 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
                     type="number"
                     name="minStock"
                     min="1"
-                    value={minStock}
+                    value={parseFloat(minStock)}
                     errors={inputErrors.minStock}
                 />
                 <SelectField
                     label="Unidad de medida"
                     name="measureUnitId"
                     errors={inputErrors.measureUnitId}
-                    options={measureUnits.map(({ id, value }) => ({
+                    options={measureUnits.map(({ id, name }) => ({
                         value: id,
-                        text: value,
+                        text: name,
                         selected: id === measureUnitId
                     }))}
                 />

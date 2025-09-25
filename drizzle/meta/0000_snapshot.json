@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "3b7c7b56-83ee-4151-8656-a8cde7f3a85a",
+  "id": "6a6b90f9-bbec-4030-b53e-be64da656aae",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "businesses": {
@@ -91,7 +91,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -157,7 +157,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -279,7 +279,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -352,19 +352,19 @@
         },
         "stock": {
           "name": "stock",
-          "type": "int unsigned",
+          "type": "decimal(10,3) unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 0
+          "default": "'0.000'"
         },
         "min_stock": {
           "name": "min_stock",
-          "type": "int unsigned",
+          "type": "decimal(10,3) unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 10
+          "default": "'0.000'"
         },
         "measure_unit_id": {
           "name": "measure_unit_id",
@@ -391,7 +391,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -445,16 +445,65 @@
           "notNull": true,
           "autoincrement": true
         },
-        "value": {
-          "name": "value",
+        "name": {
+          "name": "name",
           "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "symbol": {
+          "name": "symbol",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "enum('weight','volume','length','area','time','unit','currency')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "business_id": {
+          "name": "business_id",
+          "type": "binary(16)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "measure_units_business_id_businesses_id_fk": {
+          "name": "measure_units_business_id_businesses_id_fk",
+          "tableFrom": "measure_units",
+          "tableTo": "businesses",
+          "columnsFrom": [
+            "business_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "measure_units_id": {
           "name": "measure_units_id",
@@ -515,7 +564,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -569,23 +618,16 @@
           "notNull": true,
           "autoincrement": true
         },
-        "product_id": {
-          "name": "product_id",
-          "type": "bigint unsigned",
+        "output_type": {
+          "name": "output_type",
+          "type": "enum('item','service')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "ingredient_id": {
-          "name": "ingredient_id",
+        "output_id": {
+          "name": "output_id",
           "type": "bigint unsigned",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "quantity": {
-          "name": "quantity",
-          "type": "smallint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -608,38 +650,12 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "recipes_product_id_items_id_fk": {
-          "name": "recipes_product_id_items_id_fk",
-          "tableFrom": "recipes",
-          "tableTo": "items",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "recipes_ingredient_id_items_id_fk": {
-          "name": "recipes_ingredient_id_items_id_fk",
-          "tableFrom": "recipes",
-          "tableTo": "items",
-          "columnsFrom": [
-            "ingredient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "recipes_business_id_businesses_id_fk": {
           "name": "recipes_business_id_businesses_id_fk",
           "tableFrom": "recipes",
@@ -665,8 +681,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "records": {
-      "name": "records",
+    "recipe_components": {
+      "name": "recipe_components",
       "columns": {
         "id": {
           "name": "id",
@@ -675,37 +691,30 @@
           "notNull": true,
           "autoincrement": true
         },
-        "product_id": {
-          "name": "product_id",
+        "recipe_id": {
+          "name": "recipe_id",
           "type": "bigint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "transaction_id": {
-          "name": "transaction_id",
-          "type": "bigint unsigned",
+        "input_type": {
+          "name": "input_type",
+          "type": "enum('item','service')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "unit_price": {
-          "name": "unit_price",
-          "type": "decimal(10,2) unsigned",
+        "input_id": {
+          "name": "input_id",
+          "type": "bigint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "quantity": {
           "name": "quantity",
-          "type": "smallint unsigned",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "subtotal": {
-          "name": "subtotal",
-          "type": "decimal(10,2) unsigned",
+          "type": "decimal(10,3) unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -728,18 +737,18 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "records_product_id_items_id_fk": {
-          "name": "records_product_id_items_id_fk",
-          "tableFrom": "records",
-          "tableTo": "items",
+        "recipe_components_recipe_id_recipes_id_fk": {
+          "name": "recipe_components_recipe_id_recipes_id_fk",
+          "tableFrom": "recipe_components",
+          "tableTo": "recipes",
           "columnsFrom": [
-            "product_id"
+            "recipe_id"
           ],
           "columnsTo": [
             "id"
@@ -747,22 +756,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "records_transaction_id_transactions_id_fk": {
-          "name": "records_transaction_id_transactions_id_fk",
-          "tableFrom": "records",
-          "tableTo": "transactions",
-          "columnsFrom": [
-            "transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "records_business_id_businesses_id_fk": {
-          "name": "records_business_id_businesses_id_fk",
-          "tableFrom": "records",
+        "recipe_components_business_id_businesses_id_fk": {
+          "name": "recipe_components_business_id_businesses_id_fk",
+          "tableFrom": "recipe_components",
           "tableTo": "businesses",
           "columnsFrom": [
             "business_id"
@@ -775,8 +771,136 @@
         }
       },
       "compositePrimaryKeys": {
-        "records_id": {
-          "name": "records_id",
+        "recipe_components_id": {
+          "name": "recipe_components_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "transaction_details": {
+      "name": "transaction_details",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "item_id": {
+          "name": "item_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "item_name": {
+          "name": "item_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "measure_unit_name": {
+          "name": "measure_unit_name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "measure_unit_symbol": {
+          "name": "measure_unit_symbol",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "decimal(10,3) unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "unit_price": {
+          "name": "unit_price",
+          "type": "decimal(12,2) unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "total": {
+          "name": "total",
+          "type": "decimal(14,2) unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "business_id": {
+          "name": "business_id",
+          "type": "binary(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "transaction_details_transaction_id_transactions_id_fk": {
+          "name": "transaction_details_transaction_id_transactions_id_fk",
+          "tableFrom": "transaction_details",
+          "tableTo": "transactions",
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "transaction_details_business_id_businesses_id_fk": {
+          "name": "transaction_details_business_id_businesses_id_fk",
+          "tableFrom": "transaction_details",
+          "tableTo": "businesses",
+          "columnsFrom": [
+            "business_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "transaction_details_id": {
+          "name": "transaction_details_id",
           "columns": [
             "id"
           ]
@@ -850,7 +974,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -930,29 +1054,28 @@
           "name": "description",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "type": {
           "name": "type",
-          "type": "enum('income','expense')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'expense'"
-        },
-        "total": {
-          "name": "total",
-          "type": "decimal(10,2) unsigned",
+          "type": "enum('purchase_supply','purchase_service','sale_product','sale_service','production')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "due_date": {
           "name": "due_date",
-          "type": "date",
+          "type": "datetime",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "total": {
+          "name": "total",
+          "type": "decimal(10,2) unsigned",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -973,7 +1096,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -1082,7 +1205,7 @@
           "name": "business_id",
           "type": "binary(16)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },

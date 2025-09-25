@@ -92,9 +92,9 @@ const measureUnits = await findAll();
                     label="Unidad de medida"
                     name="measureUnitId"
                     errors={inputErrors.measureUnitId}
-                    options={measureUnits.map(({ id, value }) => ({
+                    options={measureUnits.map(({ id, name }) => ({
                         value: id,
-                        text: value,
+                        text: name,
                     }))}
                 />
             </div>

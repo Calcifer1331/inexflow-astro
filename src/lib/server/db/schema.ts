@@ -111,7 +111,7 @@ export const measureUnit = mysqlTable('measure_units', {
 	symbol: varchar({ length: 50 }).notNull(),
 	type: mysqlEnum(['weight', 'volume', 'length', 'area', 'time', 'unit', 'currency']).notNull(),
 	...auditableFields,
-	...tenantFields
+	businessId: mysqlUUID().references(() => business.id, { onDelete: 'cascade' })
 });
 
 
@@ -127,8 +127,8 @@ export const item = mysqlTable('items', {
 	type: mysqlEnum(['product', 'supply']).default('product').notNull(),
 	cost: decimal({ scale: 2, precision: 10, unsigned: true, }).default('0.00').notNull(),
 	sellingPrice: decimal({ scale: 2, precision: 10, unsigned: true, }),
-	stock: decimal({ precision: 10, scale: 3, unsigned: true }).default('0.000').notNull(),
-	minStock: decimal({ precision: 10, scale: 3, unsigned: true }).default('0.000').notNull(),
+	stock: decimal({ precision: 10, scale: 2, unsigned: true }).default('0').notNull(),
+	minStock: decimal({ precision: 10, scale: 2, unsigned: true }).default('0').notNull(),
 	measureUnitId: bigint({ mode: 'number', unsigned: true }).notNull().references(() => measureUnit.id, { onDelete: 'cascade' }),
 	...auditableFields,
 	...tenantFields
@@ -212,7 +212,7 @@ export const recipeComponent = mysqlTable('recipe_components', {
 	inputId: bigint({ mode: 'number', unsigned: true }).notNull(),
 
 	// Cantidad requerida
-	quantity: decimal({ precision: 10, scale: 3, unsigned: true }).notNull(),
+	quantity: decimal({ precision: 10, scale: 2, unsigned: true }).notNull(),
 
 	...auditableFields,
 	...tenantFields,
@@ -220,7 +220,10 @@ export const recipeComponent = mysqlTable('recipe_components', {
 
 
 export type Recipe = InferSelectModel<typeof recipe>;
+export type RecipeType = Recipe['outputType'];
 export type NewRecipe = InferInsertModel<typeof recipe>;
+export type RecipeComponent = InferSelectModel<typeof recipeComponent>;
+export type NewRecipeComponent = InferInsertModel<typeof recipeComponent>;
 
 /**
  * Contactos de los negocios, clientes o proveedores.
@@ -283,7 +286,7 @@ export const record = mysqlTable('transaction_details', {
 	measureUnitSymbol: varchar({ length: 10 }).notNull(),
 
 	// Transacción en sí:
-	quantity: decimal({ precision: 10, scale: 3, unsigned: true }).notNull(),
+	quantity: decimal({ precision: 10, scale: 2, unsigned: true }).notNull(),
 	unitPrice: decimal({ precision: 12, scale: 2, unsigned: true }).notNull(),
 	total: decimal({ precision: 14, scale: 2, unsigned: true }).notNull(),
 

@@ -9,8 +9,8 @@ export const itemSchema = z.object({
     type: z.enum(itemTypeValues, { message: "El tipo de elemento es incorrecto" }),
     cost: numBuilder('El costo', 0.00, undefined, 0.01).default(0.01),
     sellingPrice: numBuilder('El costo', 0.00, undefined, 0.01).nullable(),
-    stock: numBuilder('El stock', 0).default(0),
-    minStock: numBuilder('El stock', 0).default(10),
+    stock: numBuilder('El stock', 0.000).default(0),
+    minStock: numBuilder('El stock', 0.000).default(10),
     measureUnitId: numBuilder('El id de unidad de medida', 1),
 }).merge(auditSchema).merge(tenant);
 

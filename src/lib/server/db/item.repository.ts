@@ -14,10 +14,10 @@ export async function findAllByBusinessIdAndType(businessId: UUID, type: ItemTyp
         stock: item.stock,
         minStock: item.minStock,
         businessId: item.businessId,
-        measureUnit: measureUnit.value
+        measureUnit: measureUnit
     })
         .from(item)
-        .leftJoin(measureUnit, eq(measureUnit.id, item.measureUnitId))
+        .innerJoin(measureUnit, eq(measureUnit.id, item.measureUnitId))
         .where(
             and(
                 eq(item.businessId, businessId),
@@ -52,12 +52,12 @@ export async function findByIdAndBusinessIdAndTypeForShow(id: number, businessId
         sellingPrice: item.sellingPrice,
         stock: item.stock,
         minStock: item.minStock,
-        measureUnit: measureUnit.value,
+        measureUnit: measureUnit,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
     })
         .from(item)
-        .leftJoin(measureUnit, eq(measureUnit.id, item.measureUnitId))
+        .innerJoin(measureUnit, eq(measureUnit.id, item.measureUnitId))
         .limit(1)
         .where(
             and(
