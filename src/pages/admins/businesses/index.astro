@@ -2,24 +2,17 @@
 import ActionButton from "@/components/ActionButton.astro";
 import Alert from "@/components/Alert.astro";
 import Layout from "@/layouts/Layout.astro";
-import { currencyFormatter } from "@/lib/helpers/format";
+import { currencyFormatter, dateFormatter } from "@/lib/helpers/format";
 import { type ItemType } from "@/lib/server/db/schema";
-import { findAllByBusinessIdAndType } from "@/lib/server/db/item.repository";
 import { actions, isInputError } from "astro:actions";
+import { findAll } from "@/lib/server/db/business.repository";
 
 const { authenticatedUser } = Astro.locals;
 
-if (authenticatedUser.role !== "businessman")
+if (authenticatedUser.role !== "admin")
     return new Response(null, { status: 403 });
 
-const products = await findAllByBusinessIdAndType(
-    authenticatedUser.businessId,
-    "product",
-);
-
-const alertProducts = products.filter(
-    (product) => product.stock < product.minStock,
-);
+const businesses = await findAll();
 
 const deleteResult = Astro.getActionResult(actions.item.delete);
 ---
@@ -48,8 +41,8 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
             <Alert type="success">Producto eliminado exitosamente!!</Alert>
         )
     }
-    <ActionButton action="new" href="/tenants/products/new">
-        Agregar Productos
+    <ActionButton action="new" href="/admins/businesses/new">
+        Agregar Negocio
     </ActionButton>
 
     <div class="table-responsive">
@@ -61,52 +54,35 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
                 <tr>
                     <th></th>
                     <th>Nombre</th>
-                    <th>Costo</th>
-                    <th>Precio de Venta</th>
-                    <th>Cantidad</th>
+                    <th>Numero de Telefono</th>
+                    <th>Creado</th>
+                    <th>Actualizado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {
-                    products.length ? (
-                        products.map(
+                    businesses.length ? (
+                        businesses.map(
                             (
                                 {
-                                    cost,
-                                    id,
-                                    name,
-                                    sellingPrice,
-                                    stock,
-                                    measureUnit,
+                                    createdAt,id,name,phone,updatedAt
                                 },
                                 i,
                             ) => (
                                 <tr>
                                     <td>{i + 1}</td>
                                     <td>{name}</td>
-                                    <td>
-                                        {currencyFormatter.format(
-                                            parseFloat(cost),
-                                        )}
-                                    </td>
-                                    <td>
-                                        {sellingPrice
-                                            ? currencyFormatter.format(
-                                                  parseFloat(sellingPrice),
-                                              )
-                                            : "--"}
-                                    </td>
-                                    <td>
-                                        {stock} {measureUnit}
-                                    </td>
+                                    <td>{phone}</td>
+                                    <td>{dateFormatter.format(createdAt)}</td>
+                                    <td>{dateFormatter.format(updatedAt)}</td>
                                     <td>
                                         <div class="btn-group">
                                             <a
                                                 class="btn btn-outline-primary"
                                                 type="button"
                                                 title="Ver informacion de Elemento"
-                                                href={`/tenants/products/${id}`}
+                                                href={`/admins/businesses/${id}`}
                                             >
                                                 <svg
                                                     class="bi flex-shrink-0"
@@ -122,7 +98,7 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
                                                 class="btn btn-primary"
                                                 type="button"
                                                 title="Editra Elemento"
-                                                href={`/tenants/products/${id}/edit`}
+                                                href={`/admins/businesses/${id}/edit`}
                                             >
                                                 <svg
                                                     class="bi flex-shrink-0"
@@ -230,18 +206,6 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
             </div>
         </div>
     </div>
-    {
-        alertProducts.length &&
-            alertProducts.map(({ id, name }) => (
-                <Alert type="danger">
-                    alerta{" "}
-                    <a href={`/tenants/products/${id}`} class="alert-link">
-                        {name}
-                    </a>{" "}
-                    tiene poco
-                </Alert>
-            ))
-    }
     <script>
         document.addEventListener("astro:page-load", () => {
             const exampleModal = document.getElementById("exampleModal");

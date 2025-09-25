@@ -2,24 +2,30 @@
 import ActionButton from "@/components/ActionButton.astro";
 import Alert from "@/components/Alert.astro";
 import Layout from "@/layouts/Layout.astro";
-import { currencyFormatter } from "@/lib/helpers/format";
+import { currencyFormatter, dateFormatter } from "@/lib/helpers/format";
 import { type ItemType } from "@/lib/server/db/schema";
-import { findAllByBusinessIdAndType } from "@/lib/server/db/item.repository";
 import { actions, isInputError } from "astro:actions";
+import { findAllByBusinessIdAndTypeForAdminPage } from "@/lib/server/db/user.repository";
+import { isActiveOptions } from "@/lib/schemas/user.schema";
+import { UUIDParser } from "@/lib/schemas/common.schema";
+import { findById } from "@/lib/server/db/business.repository";
 
 const { authenticatedUser } = Astro.locals;
 
-if (authenticatedUser.role !== "businessman")
+if (authenticatedUser.role !== "admin")
     return new Response(null, { status: 403 });
 
-const products = await findAllByBusinessIdAndType(
-    authenticatedUser.businessId,
-    "product",
-);
+const businessId = UUIDParser.safeParse(Astro.params.id);
 
-const alertProducts = products.filter(
-    (product) => product.stock < product.minStock,
-);
+if(businessId.error)
+    return new Response(null, { status: 404 });
+
+    const [business,users] = await Promise.all([
+        findById(businessId.data),
+        findAllByBusinessIdAndTypeForAdminPage(businessId.data,'businessman')
+    ])
+
+    if (!business) return new Response(null, { status: 403 });
 
 const deleteResult = Astro.getActionResult(actions.item.delete);
 ---
@@ -48,9 +54,23 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
             <Alert type="success">Producto eliminado exitosamente!!</Alert>
         )
     }
-    <ActionButton action="new" href="/tenants/products/new">
-        Agregar Productos
+    <h1>{business.name}</h1>
+    <p><strong>Identificador:</strong> {business.id}</p>
+    <p><strong>Numero de Telefono:</strong> {business.phone}</p>
+    <p>
+        <strong>Creado:</strong>
+        {dateFormatter.format(business.createdAt)}
+    </p>
+    <p>
+        <strong>Ultima actualizacion:</strong>
+        {dateFormatter.format(business.updatedAt)}
+    </p>
+    <ActionButton action="edit" href={`/admins/businesses/${business.id}/edit`}>
+        Editar Negocio
     </ActionButton>
+
+    <hr>
+    <h3>Empleados de Negocio</h3>
 
     <div class="table-responsive">
         <table
@@ -61,52 +81,33 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
                 <tr>
                     <th></th>
                     <th>Nombre</th>
-                    <th>Costo</th>
-                    <th>Precio de Venta</th>
-                    <th>Cantidad</th>
+                    <th>Correo Electronico</th>
+                    <th>Esta Activo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {
-                    products.length ? (
-                        products.map(
+                    users.length ? (
+                        users.map(
                             (
                                 {
-                                    cost,
-                                    id,
-                                    name,
-                                    sellingPrice,
-                                    stock,
-                                    measureUnit,
+                                    id : userId,name,isActive,email
                                 },
                                 i,
                             ) => (
                                 <tr>
                                     <td>{i + 1}</td>
                                     <td>{name}</td>
-                                    <td>
-                                        {currencyFormatter.format(
-                                            parseFloat(cost),
-                                        )}
-                                    </td>
-                                    <td>
-                                        {sellingPrice
-                                            ? currencyFormatter.format(
-                                                  parseFloat(sellingPrice),
-                                              )
-                                            : "--"}
-                                    </td>
-                                    <td>
-                                        {stock} {measureUnit}
-                                    </td>
+                                    <td><a href={`mailto:${email}`} target="_blank">{email}</a></td>
+                                    <td>{isActiveOptions(isActive)}</td>
                                     <td>
                                         <div class="btn-group">
                                             <a
                                                 class="btn btn-outline-primary"
                                                 type="button"
                                                 title="Ver informacion de Elemento"
-                                                href={`/tenants/products/${id}`}
+                                                href={`/admins/businesses/${business.id}/${userId}`}
                                             >
                                                 <svg
                                                     class="bi flex-shrink-0"
@@ -118,41 +119,6 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
                                                     <use href="/assets/svg/miscellaniaSprite.svg#fe-info" />
                                                 </svg>
                                             </a>
-                                            <a
-                                                class="btn btn-primary"
-                                                type="button"
-                                                title="Editra Elemento"
-                                                href={`/tenants/products/${id}/edit`}
-                                            >
-                                                <svg
-                                                    class="bi flex-shrink-0"
-                                                    role="img"
-                                                    aria-label="Editra Elemento"
-                                                    width="24"
-                                                    height="24"
-                                                >
-                                                    <use href="/assets/svg/miscellaniaSprite.svg#fe-edit" />
-                                                </svg>
-                                            </a>
-                                            <button
-                                                type="button"
-                                                class="btn btn-danger"
-                                                title="Eliminar Elemento"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal"
-                                                data-bs-id={id}
-                                                data-bs-name={name}
-                                            >
-                                                <svg
-                                                    class="bi flex-shrink-0"
-                                                    role="img"
-                                                    aria-label="Eliminar Elemento"
-                                                    width="24"
-                                                    height="24"
-                                                >
-                                                    <use href="/assets/svg/miscellaniaSprite.svg#fe-trash" />
-                                                </svg>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -230,18 +196,6 @@ const deleteResult = Astro.getActionResult(actions.item.delete);
             </div>
         </div>
     </div>
-    {
-        alertProducts.length &&
-            alertProducts.map(({ id, name }) => (
-                <Alert type="danger">
-                    alerta{" "}
-                    <a href={`/tenants/products/${id}`} class="alert-link">
-                        {name}
-                    </a>{" "}
-                    tiene poco
-                </Alert>
-            ))
-    }
     <script>
         document.addEventListener("astro:page-load", () => {
             const exampleModal = document.getElementById("exampleModal");

@@ -1,0 +1,20 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { findById } from "@/lib/server/db/business.repository";
+import { dateFormatter } from "@helper/format";
+import FieldText from "@/components/FieldText.astro";
+import { UUIDParser } from "@/lib/schemas/common.schema";
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "admin")
+    return new Response(null, { status: 403 });
+---
+
+<Layout title="Negocio">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <FieldText label="Nombre" name="name" />
+            <FieldText label="Numero de Telefono" type="tel" name="phone" />
+        </div>
+    </div>
+</Layout>

@@ -3,12 +3,17 @@ import Layout from "@/layouts/Layout.astro";
 import { findById } from "@/lib/server/db/business.repository";
 import { dateFormatter } from "@helper/format";
 import FieldText from "@/components/FieldText.astro";
+import { UUIDParser } from "@/lib/schemas/common.schema";
 const { authenticatedUser } = Astro.locals;
 
-if (authenticatedUser.role !== "businessman")
+if (authenticatedUser.role !== "admin")
     return new Response(null, { status: 403 });
 
-const business = await findById(authenticatedUser.businessId);
+const businessId = UUIDParser.safeParse(Astro.params.id);
+
+if (businessId.error) return new Response(null, { status: 404 });
+
+const business = await findById(businessId.data);
 
 if (!business) return new Response(null, { status: 404 });
 ---

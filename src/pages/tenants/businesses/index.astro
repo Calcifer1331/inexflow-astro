@@ -1,7 +1,7 @@
 ---
 import ActionButton from "@comp/ActionButton.astro";
 import Layout from "@/layouts/Layout.astro";
-import { findById } from "@db/business.respository";
+import { findById } from "@/lib/server/db/business.repository";
 import { dateFormatter } from "@helper/format";
 const { authenticatedUser } = Astro.locals;
 

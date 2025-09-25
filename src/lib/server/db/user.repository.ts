@@ -1,10 +1,11 @@
 import { db } from './index';
-import type { User, NewUser, UserSession } from './schema';
+import type { User, NewUser, UserSession, UserRole } from './schema';
 import { user } from './schema';
 import { eq, ilike } from 'drizzle-orm/mysql-core/expressions';
-import { sql } from 'drizzle-orm';
+import { and, sql } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import type { UUID } from 'node:crypto';
+import { escape } from 'node:querystring';
 
 // export async function findUserByEmail(email: string): Promise<AuthenticateUser | null> {
 //     return (await db.select({
@@ -35,7 +36,34 @@ import type { UUID } from 'node:crypto';
 
 //     return [emailExists.length > 0, usernameExists.length > 0];
 // }
+export async function findAllByBusinessIdAndTypeForAdminPage(businessId: UUID, role: UserRole) {
 
+    return await db.select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isActive: user.isActive
+    })
+        .from(user)
+        .where(
+            and(
+                eq(user.role, role),
+                eq(user.businessId, businessId)
+            )
+        )
+
+}
+export async function findByIdBusinessIdAndTypeForAdminPage(id: UUID, businessId: UUID, role: UserRole) {
+    return await db.select()
+        .from(user)
+        .where(
+            and(
+                eq(user.role, role),
+                eq(user.businessId, businessId),
+                eq(user.id, id)
+            )
+        ).limit(1).then(rest => rest[0] ? rest[0] : null)
+}
 export async function authenticateUser(email: string, password: string): Promise<UserSession | null> {
     const [ressult] = await db.select({
         id: user.id,

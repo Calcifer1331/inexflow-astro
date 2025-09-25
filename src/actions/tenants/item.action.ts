@@ -1,6 +1,6 @@
 import { createItemSchema, deleteItemSchema, editItemSchema } from '@/lib/schemas/item.schema';
 import type { EditItem, Item, NewItem } from '@/lib/server/db/schema';
-import { create, deleteByIdAndBusinessIdAndType, updateByIdAndBusinessIdAndType } from '@db/item.respository';
+import { create, deleteByIdAndBusinessIdAndType, updateByIdAndBusinessIdAndType } from '@/lib/server/db/item.repository';
 import { ActionError, defineAction } from 'astro:actions';
 
 export const items = {

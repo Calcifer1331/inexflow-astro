@@ -1,0 +1,43 @@
+---
+import ActionButton from "@/components/ActionButton.astro";
+import Alert from "@/components/Alert.astro";
+import Layout from "@/layouts/Layout.astro";
+import { currencyFormatter, dateFormatter } from "@/lib/helpers/format";
+import { type ItemType } from "@/lib/server/db/schema";
+import { actions, isInputError } from "astro:actions";
+import { findByIdBusinessIdAndTypeForAdminPage } from "@/lib/server/db/user.repository";
+import { isActiveOptions } from "@/lib/schemas/user.schema";
+import { UUIDParser } from "@/lib/schemas/common.schema";
+
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "admin")
+    return new Response(null, { status: 403 });
+
+const businessId = UUIDParser.safeParse(Astro.params.id);
+const userId = UUIDParser.safeParse(Astro.params.userId);
+if (businessId.error || userId.error)
+    return new Response(null, { status: 404 });
+
+const user = await findByIdBusinessIdAndTypeForAdminPage(
+    userId.data,
+    businessId.data,
+    "businessman",
+);
+if (!user) return new Response(null, { status: 404 });
+---
+
+<Layout title="Productos">
+    <h1>{user.name}</h1>
+    <p><strong>Identificador:</strong> {user.id}</p>
+    <p><strong>Correo Electronico:</strong> {user.email}</p>
+    <p><strong>Esta activop:</strong> {isActiveOptions(user.isActive)}</p>
+    <p>
+        <strong>Creado:</strong>
+        {dateFormatter.format(user.createdAt)}
+    </p>
+    <p>
+        <strong>Ultima actualizacion:</strong>
+        {dateFormatter.format(user.updatedAt)}
+    </p>
+</Layout>

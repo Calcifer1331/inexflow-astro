@@ -25,7 +25,7 @@ export type LoginSchema = z.infer<typeof loginSchema>;
 export type UserSchema = z.infer<typeof userSchema>;
 
 export function isActiveOptions(isActive: boolean) {
-    return isActive ? "Habilitado" : "Deshabilitado";
+    return isActive ? "Activo" : "Deshabilitado";
 }
 
 export const userRoleOptions: Record<(typeof userRoleValues)[number], string> =
