@@ -73,70 +73,87 @@ const recipes = await findAllOfItemByOuyputIdByBusinessIdAndType(
         Editar
     </ActionButton>
     <hr />
-    <h3>Recetas del Proucto</h3>
+    <h3>Recetas del Producto</h3>
     {
         !recipes.length ? (
             <Alert type="info">No tiene recetas</Alert>
         ) : (
             <div class="container text-center">
                 <div class="row">
-                    {recipes.map(({ components }, i) => (
-                        <div class="col col-md-auto p-2">
-                            <div class="rounded-4 bg-info-subtle p-4 mb-0">
-                                <h6>Receta {i + 1}</h6>
-                                <table class="table table-info table-striped-columns ">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Cantidad</th>
-                                            <th scope="col">Precio</th>
-                                            <th scope="col">SubTotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {components.map(
-                                            ({
-                                                cost,
-                                                name,
-                                                measureUnitSymbol,
-                                                quantity,
-                                            }) => {
-                                                return (
-                                                    <tr>
-                                                        <td>{name} </td>
-                                                        <td>
-                                                            {parseFloat(
-                                                                quantity,
-                                                            )}{" "}
-                                                            {measureUnitSymbol}
-                                                        </td>
-                                                        <td>
-                                                            {currencyFormatter.format(
-                                                                parseFloat(
-                                                                    cost ?? "0",
-                                                                ),
-                                                            )}
-                                                        </td>
-                                                        <td>
-                                                            {currencyFormatter.format(
-                                                                parseFloat(
-                                                                    cost ?? "0",
-                                                                ) *
-                                                                    parseFloat(
-                                                                        quantity ??
-                                                                            "0",
-                                                                    ),
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            },
-                                        )}
-                                    </tbody>
-                                </table>
+                    {recipes.map(({ components }, i) => {
+                        let total = 0;
+                        return (
+                            <div class="col col-md-auto p-2">
+                                <div class="rounded-4 bg-info-subtle p-4 mb-0">
+                                    <h6>Receta {i + 1}</h6>
+                                    <table class="table table-info table-striped-columns ">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad</th>
+                                                <th scope="col">Precio</th>
+                                                <th scope="col">SubTotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {components.map(
+                                                ({
+                                                    cost,
+                                                    name,
+                                                    measureUnitSymbol,
+                                                    quantity,
+                                                }) => {
+                                                    const parseCost =
+                                                        parseFloat(cost ?? "0");
+                                                    const parseQuantity =
+                                                        parseFloat(
+                                                            quantity ?? "0",
+                                                        );
+                                                    const subtotal =
+                                                        parseCost *
+                                                        parseQuantity;
+                                                    total += subtotal;
+                                                    return (
+                                                        <tr>
+                                                            <td>{name} </td>
+                                                            <td>
+                                                                {parseQuantity}{" "}
+                                                                {
+                                                                    measureUnitSymbol
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {currencyFormatter.format(
+                                                                    parseCost,
+                                                                )}
+                                                            </td>
+                                                            <td>
+                                                                {currencyFormatter.format(
+                                                                    subtotal,
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                },
+                                            )}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td>Total</td>
+                                                <td />
+                                                <td />
+                                                <td>
+                                                    {currencyFormatter.format(
+                                                        total,
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         )

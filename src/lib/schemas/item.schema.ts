@@ -1,5 +1,5 @@
 import { z } from "astro:schema";
-import { stringBuilder, uuidBuilder, numBuilder, auditSchema, tenant } from "./common.schema";
+import { stringBuilder, uuidBuilder, numBuilder, historicalFields, tenant } from "./common.schema";
 
 export const itemTypeValues = ['product', 'supply'] as const;
 
@@ -12,7 +12,7 @@ export const itemSchema = z.object({
     stock: numBuilder('El stock', 0.000).default(0),
     minStock: numBuilder('El stock', 0.000).default(10),
     measureUnitId: numBuilder('El id de unidad de medida', 1),
-}).merge(auditSchema).merge(tenant);
+}).merge(historicalFields).merge(tenant);
 
 export const editItemSchema = itemSchema.omit({ createdAt: true, updatedAt: true, businessId: true })
 export const createItemSchema = editItemSchema.omit({ id: true });

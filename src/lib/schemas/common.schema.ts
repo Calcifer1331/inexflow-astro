@@ -43,8 +43,8 @@ export const numBuilder = (fieldName: string, min?: number, max?: number, step?:
     return zNumber;
 }
 
-export const dateBuilder = (fieldName: string) =>
-    z.date({
+export const dateBuilder = (fieldName: string, coerce?: boolean) =>
+    (coerce ? z.coerce : z).date({
         required_error: `${fieldName} es requerida`,
         invalid_type_error: `${fieldName} debe ser una fecha valida.`
     })
@@ -66,8 +66,13 @@ export const imageFile = z
         message: "Debe ser una imagen válida",
     });
 
-export const auditSchema = z.object({
+export const historicalFields = z.object({
     createdAt: dateBuilder('La fecha de creacion'),
     updatedAt: dateBuilder('La fecha de actualizacion'),
 })
+export const auditSchema = z.object({
+    createdBy: stringBuilder('El usuario que lo creo').nullable(),
+    updatedBy: stringBuilder('El usuario que lo actualizo').nullable(),
+}).merge(historicalFields)
+
 export const tenant = z.object({ businessId: uuidBuilder('El id del negocio') });

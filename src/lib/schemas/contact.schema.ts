@@ -1,5 +1,5 @@
 import { z } from "astro:schema";
-import { stringBuilder, numBuilder, auditSchema, tenant } from "./common.schema";
+import { stringBuilder, numBuilder, historicalFields, tenant } from "./common.schema";
 
 export const contactTypeValues = ['customer', 'provider'] as const;
 
@@ -12,7 +12,7 @@ export const contactSchema = z.object({
     phone: stringBuilder("El numero de telefono", 1, 250, true).nullable(),
     address: stringBuilder("La direccion ", 5, 250, true).nullable(),
     type: z.enum(contactTypeValues, { message: "El rol del usuario es incorrecto" }).default('customer'),
-}).merge(auditSchema).merge(tenant);
+}).merge(historicalFields).merge(tenant);
 
 
 export type ContactSchema = z.infer<typeof contactSchema>;

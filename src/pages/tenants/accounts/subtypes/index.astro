@@ -1,0 +1,65 @@
+---
+import DeleteModal from "@mod/CRUD/DeleteModal.astro";
+import Table from "@mod/CRUD/Table.astro";
+import Layout from "@lay/Layout.astro";
+import { findAllAccountsSubtype } from "@db/account_subtype.repository";
+import ActionButtons from "@mod/CRUD/ActionButtons.astro";
+import ActionButton from "@comp/ActionButton.astro";
+import {
+    accountTypeOptions,
+    accountTypeCode,
+} from "@/lib/schemas/account.schema";
+import { actions } from "astro:actions";
+const accountsSubtype = await findAllAccountsSubtype();
+const segment = "tenants/accounts/subtypes";
+---
+
+<Layout title="Subtipo de Cuentas">
+    <ActionButton action="new" href="/tenants/accounts/subtypes/new">
+        Agregar Subtipo de Cuenta
+    </ActionButton>
+    <Table>
+        <Fragment slot="head">
+            <th>#</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Tipo de Cuenta</th>
+            <th>Acciones</th>
+        </Fragment>
+        <Fragment slot="body">
+            {
+                accountsSubtype.length ? (
+                    accountsSubtype.map(
+                        ({ code, name, accountType, id, businessId }, i) => (
+                            <tr>
+                                <td>{i + 1}</td>
+                                <td>{code}</td>
+                                <td>{name}</td>
+                                <td
+                                    title={`${accountType}, código: ${accountTypeCode[accountType]}`}
+                                >
+                                    {accountTypeOptions[accountType]}
+                                </td>
+                                <td>
+                                    {businessId && (
+                                        <ActionButtons {id} {name} {segment} />
+                                    )}
+                                </td>
+                            </tr>
+                        ),
+                    )
+                ) : (
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            No hay uentas registrados.
+                        </td>
+                    </tr>
+                )
+            }
+        </Fragment>
+    </Table>
+    <DeleteModal
+        action={actions.accountSubtype.delete}
+        sectionName="Subtipo de Cuenta"
+    />
+</Layout>

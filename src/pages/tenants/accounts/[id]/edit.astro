@@ -1,0 +1,124 @@
+---
+import Alert from "@comp/Alert.astro";
+import FieldText from "@comp/FieldText.astro";
+import Layout from "@lay/Layout.astro";
+import { isInputError, actions } from "astro:actions";
+import {
+    findAccountByIdAndBusinessIdForEdit,
+} from "@db/account.repository";
+import {
+    findAllAccountsSubtypeBySelect,
+} from "@db/account_subtype.repository";
+import SelectField from "@comp/SelectField.astro";
+import { accountTypeOptions } from "@schema/account.schema";
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const parseId = parseInt(Astro.params.id ?? "0");
+
+if (!parseId) return new Response(null, { status: 404 });
+
+const [account, accountsSubtype] = await Promise.all([
+    findAccountByIdAndBusinessIdForEdit(parseId, authenticatedUser.businessId),
+    findAllAccountsSubtypeBySelect(),
+]);
+
+const result = Astro.getActionResult(actions.account.edit);
+const inputErrors = isInputError(result?.error) ? result.error.fields : {};
+
+if (!accountsSubtype.length || !account)
+    return new Response(null, { status: 404 });
+
+const { name, id, code, description, accountSubtypeId } = account;
+---
+
+<Layout title="Cuenta">
+    {
+        result && result.error && (
+            <Alert type="danger">
+                    {!isInputError(result?.error) ? (
+                        result.error.message
+                    ) : (
+                        <span>Error al editar el Producto:</span>
+                        <ul class="mb-0">
+                            {inputErrors.id &&
+                                inputErrors.id.map((error) => (
+                                    <li> {error}</li>
+                                ))}
+                        </ul>
+                    )}
+            </Alert>
+        )
+    }
+    {
+        result && result.data?.success && (
+            <Alert type="success">{name} fue actualuzado exitosamente!!</Alert>
+        )
+    }
+    <form
+        action={actions.account.edit}
+        method="POST"
+        class="needs-validation"
+        novalidate
+    >
+        <div class="row">
+            <input type="hidden" name="id" value={id}>
+            <div class="col-12 col-md-6">
+                <FieldText
+                    label="Nombre"
+                    type="text"
+                    name="name"
+                    min="2"
+                    max="250"
+                    required
+                    value={name}
+                    errors={inputErrors.name}
+                />
+                <FieldText
+                    label="Descripción"
+                    type="text"
+                    name="description"
+                    min="2"
+                    max="250"
+                    required
+                    value={description}
+                    errors={inputErrors.description}
+                />
+            </div>
+            <div class="col-12 col-md-6">
+                <FieldText
+                    label="Código"
+                    type="number"
+                    name="code"
+                    min="1"
+                    max="99999"
+                    required
+                    value={code}
+                    errors={inputErrors.code}
+                />
+                <SelectField
+                    label="Subtipo de Cuentas"
+                    name="accountSubtypeId"
+                    errors={inputErrors.accountSubtypeId}
+                    options={accountsSubtype.map(
+                        ({ id, name, accountType, code }) => ({
+                            value: id,
+                            text: `${accountTypeOptions[accountType]}| ${code} | ${name}`,
+                            selected: id === accountSubtypeId,
+                        }),
+                    )}
+                />
+            </div>
+
+            <div class="d-grid">
+                <button
+                    type="submit"
+                    class="btn btn-success mx-auto"
+                    style="width: 35%;">Registrar</button
+                >
+            </div>
+        </div>
+    </form>
+</Layout>

@@ -1,0 +1,96 @@
+---
+import type { HTMLAttributes } from "astro/types";
+interface Props {
+    action: HTMLAttributes<"form">["action"];
+    sectionName: string;
+}
+let { action, sectionName } = Astro.props as Props;
+---
+
+<div
+    class="modal fade"
+    id="exampleModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Eliminar {sectionName}
+                </h1>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message h6"></p>
+                <p class="text-danger">
+                    Al eliminar un {sectionName} toda informacio relacionada a esta
+                    sera eliminada permanentemnte
+                </p>
+                <form {action} id="form-delete-element" method="POST">
+                    <input type="hidden" name="id" />
+                    <slot name="delete-form" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="submit"
+                    form="form-delete-element"
+                    class="btn btn-danger d-flex align-items-center gap-2"
+                >
+                    Eliminar
+                    <svg
+                        class="bi flex-shrink-0"
+                        role="img"
+                        aria-label={`Eliminar ${sectionName}`}
+                        width="20"
+                        height="20"
+                    >
+                        <use href="/assets/svg/miscellaniaSprite.svg#fe-trash"
+                        ></use>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const exampleModal = document.getElementById("exampleModal");
+
+        if (!exampleModal) return;
+
+        const modalDeleteForm: HTMLFormElement | null =
+            exampleModal.querySelector(".modal-body form#form-delete-element");
+
+        if (!modalDeleteForm) return;
+
+        const inputId: HTMLInputElement | null =
+            modalDeleteForm.querySelector("input[name='id']");
+
+        const modalMessage = exampleModal.querySelector(
+            ".modal-body .modal-message",
+        );
+
+        exampleModal.addEventListener("show.bs.modal", (event) => {
+            if (!modalMessage || !inputId) return;
+            const button = event.relatedTarget;
+            const id = button.getAttribute("data-bs-id");
+            const name = button.getAttribute("data-bs-name");
+
+            modalMessage.textContent = `¿Estas seguro de que deseas eliminar ${name}?`;
+
+            inputId.value = id;
+        });
+        exampleModal.addEventListener("hide.bs.modal", () => {
+            if (!modalMessage || !inputId) return;
+            modalMessage.textContent = "";
+            inputId.value = "";
+        });
+    });
+</script>

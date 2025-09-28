@@ -1,0 +1,74 @@
+---
+import DeleteModal from "@mod/CRUD/DeleteModal.astro";
+import Table from "@mod/CRUD/Table.astro";
+import Layout from "@lay/Layout.astro";
+import { findAllAccounts } from "@db/account.repository";
+import ActionButtons from "@mod/CRUD/ActionButtons.astro";
+import ActionButton from "@comp/ActionButton.astro";
+import {
+    accountTypeOptions,
+    accountTypeCode,
+} from "@/lib/schemas/account.schema";
+import { actions } from "astro:actions";
+const accounts = await findAllAccounts();
+const segment = "tenants/accounts";
+---
+
+<Layout title="Cuentas">
+    <ActionButton action="new" href="/tenants/accounts/new">
+        Agregar Cuenta
+    </ActionButton>
+    <Table>
+        <Fragment slot="head">
+            <th>#</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Subtipo de Cuenta</th>
+            <th>Tipo de Cuenta</th>
+            <th>Acciones</th>
+        </Fragment>
+        <Fragment slot="body">
+            {
+                accounts.length ? (
+                    accounts.map(({ account, account_subtype }, i) => (
+                        <tr>
+                            <td>{i + 1}</td>
+                            <td>{account.code}</td>
+                            <td>{account.name}</td>
+                            <td
+                                title={`${account_subtype.name}, código: ${account_subtype.code}`}
+                            >
+                                {account_subtype.name}
+                            </td>
+                            <td
+                                title={`${account_subtype.accountType}, código: ${accountTypeCode[account_subtype.accountType]}`}
+                            >
+                                {
+                                    accountTypeOptions[
+                                        account_subtype.accountType
+                                    ]
+                                }
+                            </td>
+                            <td>
+                                {account.businessId && (
+                                    <ActionButtons
+                                        id={account.id}
+                                        name={account.name}
+                                        {segment}
+                                    />
+                                )}
+                            </td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            No hay uentas registrados.
+                        </td>
+                    </tr>
+                )
+            }
+        </Fragment>
+    </Table>
+    <DeleteModal action={actions.account.delete} sectionName="Cuenta" />
+</Layout>

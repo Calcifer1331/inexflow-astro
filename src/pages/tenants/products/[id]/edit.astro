@@ -5,7 +5,7 @@ import Layout from "@/layouts/Layout.astro";
 import { findByIdAndBusinessIdAndTypeForEdit } from "@/lib/server/db/item.repository";
 import { isInputError, actions } from "astro:actions";
 import { type ItemType } from "@lib/schemas/item.schema";
-import { findAll } from "@/lib/server/db/measureUnit.repository";
+import { findAll } from "@/lib/server/db/measure_unit.repository";
 import SelectField from "@/components/SelectField.astro";
 const { authenticatedUser } = Astro.locals;
 

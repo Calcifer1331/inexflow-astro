@@ -1,0 +1,1 @@
+ALTER TABLE `transaction_details` ADD `cost` decimal(10,2) unsigned DEFAULT '0.00' NOT NULL;

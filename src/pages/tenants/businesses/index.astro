@@ -2,19 +2,30 @@
 import ActionButton from "@comp/ActionButton.astro";
 import Layout from "@/layouts/Layout.astro";
 import { findById } from "@/lib/server/db/business.repository";
-import { dateFormatter } from "@helper/format";
+import {
+    currencyFormatter,
+    dateFormatter,
+    shortDateFormatter,
+} from "@helper/format";
+import {
+    getCashFlow,
+    getIncomeStatement,
+} from "@/lib/server/db/reports.repository";
 const { authenticatedUser } = Astro.locals;
 
 if (authenticatedUser.role !== "businessman")
     return new Response(null, { status: 403 });
 
 const business = await findById(authenticatedUser.businessId);
+const incomeStatement = await getIncomeStatement(authenticatedUser.businessId);
+const cashFlow = await getCashFlow(authenticatedUser.businessId);
+console.log(incomeStatement);
 
 if (!business) return new Response(null, { status: 403 });
 ---
 
 <Layout title="Negocio">
-    <h1>{business.name}</h1>
+    <!-- <h1>{business.name}</h1>
     <p><strong>Identificador:</strong> {business.id}</p>
     <p><strong>Numero de Telefono:</strong> {business.phone}</p>
     <p>
@@ -27,14 +38,135 @@ if (!business) return new Response(null, { status: 403 });
     </p>
     <ActionButton action="edit" href="/tenants/businesses/edit">
         Editar
-    </ActionButton>
-    <ActionButton action="delete" href="/tenants/businesses/edit">
-        Eliminar
-    </ActionButton>
-    <ActionButton action="new" href="/tenants/businesses/edit">
-        Agregar
-    </ActionButton>
-    <ActionButton action="show" href="/tenants/businesses/edit">
-        Ver
-    </ActionButton>
+    </ActionButton> -->
+
+    <div class="row">
+        <div class="col-md-auto">
+            <h5>Flujo de caja</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Concepto/Descripcion</th>
+                        <th scope="col">Entrada</th>
+                        <th scope="col">Salida</th>
+                        <th scope="col">Saldo Acumulado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        cashFlow.movimientos.map(
+                            ({
+                                descripcion,
+                                entrada,
+                                fecha,
+                                metodo,
+                                saldo,
+                                salida,
+                            }) => (
+                                <tr>
+                                    <td>{shortDateFormatter.format(fecha)}</td>
+                                    <td>{descripcion}</td>
+                                    <td>
+                                        {entrada
+                                            ? currencyFormatter.format(entrada)
+                                            : ""}
+                                    </td>
+                                    <td>
+                                        {salida
+                                            ? currencyFormatter.format(salida)
+                                            : ""}
+                                    </td>
+                                    <td>{currencyFormatter.format(saldo)}</td>
+                                    <td>{metodo}</td>
+                                </tr>
+                            ),
+                        )
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-auto">
+            <h5>Estado de resultado</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Categoria</th>
+                        <th scope="col">Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ingresos por productos</td>
+                        <td
+                            >{
+                                currencyFormatter.format(
+                                    incomeStatement.ingresos_productos,
+                                )
+                            }</td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Ingresos por servicios </td>
+                        <td
+                            >{
+                                currencyFormatter.format(
+                                    incomeStatement.ingresos_servicios,
+                                )
+                            }</td
+                        >
+                    </tr>
+                    <tr>
+                        <td><strong>Ingresos Totales</strong></td>
+                        <td
+                            >{
+                                currencyFormatter.format(
+                                    incomeStatement.ingresos_totales,
+                                )
+                            }</td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Costo de ventas </td>
+                        <td>{currencyFormatter.format(incomeStatement.cogs)}</td
+                        >
+                    </tr>
+                    <tr>
+                        <td><strong>Utilidad bruta</strong></td>
+                        <td
+                            >{
+                                currencyFormatter.format(
+                                    incomeStatement.utilidad_bruta,
+                                )
+                            }</td
+                        >
+                    </tr>
+                    <tr>
+                        <td>Gastos operativos</td>
+                        <td
+                            >{
+                                currencyFormatter.format(
+                                    incomeStatement.gastos_operativos,
+                                )
+                            }</td
+                        >
+                    </tr>
+                    <!-- <tr>
+                <td>Gastos administrativos </td>
+                <td>{currencyFormatter.format(incomeStatement.)}</td>
+            </tr> -->
+                    <tr>
+                        <td><strong>Utilidad neta</strong></td>
+                        <td
+                            >{
+                                currencyFormatter.format(
+                                    incomeStatement.utilidad_neta,
+                                )
+                            }</td
+                        >
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </Layout>

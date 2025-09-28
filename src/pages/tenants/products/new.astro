@@ -5,7 +5,7 @@ import Layout from "@/layouts/Layout.astro";
 import { isInputError, actions } from "astro:actions";
 import { type ItemType } from "@lib/schemas/item.schema";
 import SelectField from "@/components/SelectField.astro";
-import { findAll } from "@/lib/server/db/measureUnit.repository";
+import { findAll } from "@/lib/server/db/measure_unit.repository";
 const { authenticatedUser } = Astro.locals;
 
 if (authenticatedUser.role !== "businessman")

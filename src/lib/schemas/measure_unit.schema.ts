@@ -1,5 +1,5 @@
 import { z } from "astro:schema";
-import { stringBuilder, auditSchema, tenant, numBuilder } from "./common.schema";
+import { stringBuilder, historicalFields, tenant, numBuilder } from "./common.schema";
 
 export const measureUnitSchema = z.object({
     id: numBuilder('El id', 1),

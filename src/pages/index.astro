@@ -2,6 +2,9 @@
 import Layout from "../layouts/Layout.astro";
 import astroLogo from "../assets/astro.svg";
 import background from "../assets/background.svg";
+// await db.update(user).set({
+// 	passwordHash: await bcrypt.hash("123456789", await bcrypt.genSalt(10)),
+// });
 ---
 
 <Layout title="inicio">
@@ -25,6 +28,21 @@ import background from "../assets/background.svg";
 					<a class="button" href="/auth/login">Iniciar session</a>
 				</section>
 			</section>
+			<button type="button" class="btn btn-primary" id="btn-add">
+				Añadir Elemento
+			</button>
+			<script>
+				import { actions } from "astro:actions";
+
+				(
+					document.querySelector(
+						"#btn-add",
+					) as HTMLButtonElement | null
+				)?.addEventListener("click", async () => {
+					const rest = await actions.account.findAll();
+					console.log(rest);
+				});
+			</script>
 		</main>
 	</div>
 </Layout>

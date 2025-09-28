@@ -19,3 +19,6 @@ export const shortDateFormatter = new Intl.DateTimeFormat('es-PA', {
     month: '2-digit',
     day: '2-digit',
 });
+export const systemDateFormatter = {
+    formatInput: (date: Date) => date.toISOString().slice(0, 10)
+} 

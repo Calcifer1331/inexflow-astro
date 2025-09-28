@@ -1,7 +1,8 @@
-import { mysqlTable, varchar, mysqlEnum, decimal, boolean, datetime, smallint, primaryKey, char, bigint, date } from 'drizzle-orm/mysql-core'; // Asegúrate de que la ruta sea correcta
-import { type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
+import { mysqlTable, varchar, mysqlEnum, decimal, boolean, datetime, smallint, primaryKey, char, bigint, date, unique, mediumint } from 'drizzle-orm/mysql-core'; // Asegúrate de que la ruta sea correcta
+import { type InferSelectModel, type InferInsertModel, sql, SQL } from 'drizzle-orm';
 import mysqlUUID from "./uuid"
 import { randomUUID, type UUID } from 'node:crypto';
+import { bytes, check } from 'drizzle-orm/gel-core';
 
 /**
  * Criterios SMART
@@ -31,18 +32,32 @@ import { randomUUID, type UUID } from 'node:crypto';
  * @property updatedAt - cada vez que se actualiza el elemento se pone la fecha del momento
  * 
  */
-export const auditableFields = {
+export const historicalFields = {
 	createdAt: datetime({ mode: 'date' }).notNull().$default(() => new Date()),
 	updatedAt: datetime({ mode: 'date' }).notNull().$default(() => new Date()).$onUpdate(() => new Date()),
-	// createdBy: mysqlUUID().references(() => user.id),
-	// updatedBy: mysqlUUID().references(() => user.id),
+}
+
+/**
+ * Compos de auditoria
+ * 
+ * @property createdAt - asigna la fecha d ecreacion del elemento
+ * @property updatedAt - cada vez que se actualiza el elemento se pone la fecha del momento
+ * @property createdBy - asigna el nombre del usuario que creo el elemento
+ * @property updatedBy - cada vez que se actualiza el elemento se pone el identificador del usuario
+ * 
+ */
+
+export const auditableFields = {
+	...historicalFields,
+	createdBy: varchar({ length: 255 }),
+	updatedBy: varchar({ length: 255 }),
 }
 
 export const business = mysqlTable('businesses', {
 	id: mysqlUUID().primaryKey().$default(() => randomUUID()),
 	name: varchar({ length: 255 }).notNull(),
 	phone: varchar({ length: 255 }).notNull(),
-	...auditableFields
+	...historicalFields
 });
 
 export type Business = InferSelectModel<typeof business>;
@@ -77,12 +92,12 @@ export type NewUser = InferInsertModel<typeof user>;
 
 export type UserSession = Pick<User, 'id' | 'email' | 'name' | 'isActive' | 'role' | 'businessId'>
 
-type AdminSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
+export type AdminSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
 	role: 'admin';
 	businessId: null; // siempre null
 };
 
-type BusinessmanSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
+export type BusinessmanSession = Pick<User, 'id' | 'email' | 'name' | 'isActive'> & {
 	role: 'businessman';
 	businessId: UUID; // obligatorio
 };
@@ -110,7 +125,7 @@ export const measureUnit = mysqlTable('measure_units', {
 	name: varchar({ length: 255 }).notNull(),
 	symbol: varchar({ length: 50 }).notNull(),
 	type: mysqlEnum(['weight', 'volume', 'length', 'area', 'time', 'unit', 'currency']).notNull(),
-	...auditableFields,
+	...historicalFields,
 	businessId: mysqlUUID().references(() => business.id, { onDelete: 'cascade' })
 });
 
@@ -267,6 +282,7 @@ export const transaction = mysqlTable('transactions', {
 
 
 export type Transaction = InferSelectModel<typeof transaction>;
+export type TransactionType = Transaction['type'];
 export type NewTransaction = InferInsertModel<typeof transaction>;
 
 /**
@@ -278,16 +294,16 @@ export const record = mysqlTable('transaction_details', {
 		.notNull()
 		.references(() => transaction.id, { onDelete: 'cascade' }),
 
-	itemId: bigint({ mode: 'number', unsigned: true }).notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	entityType: mysqlEnum(['item', 'service']).notNull(),
+	entityId: bigint({ mode: 'number', unsigned: true }).notNull(),
 
-	// Datos históricos del item en el momento de la transacción:
-	itemName: varchar({ length: 255 }).notNull(),
-	measureUnitName: varchar({ length: 50 }).notNull(),
 	measureUnitSymbol: varchar({ length: 10 }).notNull(),
 
 	// Transacción en sí:
 	quantity: decimal({ precision: 10, scale: 2, unsigned: true }).notNull(),
 	unitPrice: decimal({ precision: 12, scale: 2, unsigned: true }).notNull(),
+	cost: decimal({ scale: 2, precision: 10, unsigned: true, }),
 	total: decimal({ precision: 14, scale: 2, unsigned: true }).notNull(),
 
 	...auditableFields,
@@ -312,3 +328,93 @@ export const payment = mysqlTable('payments', {
 
 export type Payment = InferSelectModel<typeof payment>;
 export type NewPayment = InferInsertModel<typeof payment>;
+
+/**
+ * ASSETS = Activo; add:debit,subtract:credit
+ * LIABILITIES = Pasivo; add:credit,subtract:debit
+ * EQUITY = Patrimonio; add:credit,subtract:debit
+ * INCOME = Ingreso; add:credit,subtract:debit
+ * EXPENSE = Egreso; add:debit,subtract:credit
+ * COST = Costo; add:credit,subtract:debit
+ * 
+ * 
+ * cuando el businessId es null, es global, usuarios normales no pueden editarlo pero si usarlo y extender de el.
+ */
+/**
+ * para los index uniques que usan businessId, cuando es null (global) se debe validar a mano para evitar duplicidad,
+ * codigo compuesto: {typocuenta}{personalizado};ej: {activo}{activo corriente}=11;21;212;22. max:####
+ */
+export const accountSubtype = mysqlTable('account_subtype', {
+	id: bigint({ mode: 'number', unsigned: true }).autoincrement().primaryKey(),
+	code: smallint({ unsigned: true }).notNull(),
+	// compoundCode: smallint({ unsigned: true }).generatedAlwaysAs((): SQL => sql<number>`cast(concat(ORD(${accountSubtype.accountType}),${accountSubtype.code}) as int)`, { mode: 'virtual' }),
+	name: varchar({ length: 255 }).notNull(),
+	description: varchar({ length: 255 }).notNull(),
+	accountType: mysqlEnum(['assets', 'liabilities', 'equity', 'income', 'expense', 'cost']).notNull(),
+	businessId: mysqlUUID().references(() => business.id, { onDelete: 'cascade' }),
+	...auditableFields,
+}, (table) => [
+	unique().on(table.businessId, table.accountType, table.code),
+])
+
+export type AccountSubtype = InferSelectModel<typeof accountSubtype>;
+export type AccountType = AccountSubtype['accountType'];
+export type NewAccountSubtype = InferInsertModel<typeof accountSubtype>;
+export type EditAccountSubtype = Partial<Pick<AccountSubtype, 'accountType' | 'code' | 'description' | 'id' | 'name' | 'updatedBy'>>;
+/**
+ * codigo: ##### = {accountSubtypeId}{personalizado} = 11001
+ */
+export const account = mysqlTable('account', {
+	id: bigint({ mode: 'number', unsigned: true }).autoincrement().primaryKey(),
+	code: smallint({ unsigned: true }).notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	description: varchar({ length: 255 }).notNull(),
+	accountSubtypeId: bigint({ mode: 'number', unsigned: true }).notNull().references(() => accountSubtype.id, { onDelete: 'cascade' }),
+	businessId: mysqlUUID().references(() => business.id, { onDelete: 'cascade' }),
+	...auditableFields,
+}, (table) => [
+	unique().on(table.businessId, table.accountSubtypeId, table.code)
+]);
+
+export type Account = InferSelectModel<typeof account>;
+export type NewAccount = InferInsertModel<typeof account>;
+export type EditAccount = Partial<Pick<Account, 'accountSubtypeId' | 'code' | 'description' | 'id' | 'name' | 'updatedBy'>>;
+
+/**
+ * Identificado de elemento por negocio DOC-{yaer}-{code}: DOC-2025-65535
+ */
+export const journalEntry = mysqlTable('journal_entry', {
+	id: bigint({ mode: 'number', unsigned: true }).autoincrement().primaryKey(),
+	code: smallint({ unsigned: true }).notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	description: varchar({ length: 700 }).notNull(),
+	date: datetime({ mode: 'date' }).notNull(),
+	year: smallint({ unsigned: true }).generatedAlwaysAs((): SQL => sql`YEAR(${journalEntry.date})`, { mode: 'stored' }),
+	...auditableFields,
+	...tenantFields,
+}, (table) => [
+	unique().on(table.businessId, table.year, table.code)
+]);
+
+export type JournalEntry = InferSelectModel<typeof journalEntry>;
+export type NewJournalEntry = InferInsertModel<typeof journalEntry>;
+export type EditJournalEntry = Partial<Pick<JournalEntry, 'date' | 'code' | 'description' | 'id' | 'name' | 'updatedBy'>>;
+
+/**
+ * Entradas 
+ */
+export const ledgerRecord = mysqlTable('ledger_record', {
+	id: bigint({ mode: 'number', unsigned: true }).autoincrement().primaryKey(),
+	voucher: varchar({ length: 255 }).notNull(),
+	reference: varchar({ length: 255 }).notNull(),
+	accountId: bigint({ mode: 'number', unsigned: true }).notNull().references(() => account.id, { onDelete: 'cascade' }),
+	journalEntryId: bigint({ mode: 'number', unsigned: true }).notNull().references(() => journalEntry.id, { onDelete: 'cascade' }),
+	debit: decimal({ scale: 2, precision: 10, unsigned: true, }),
+	credit: decimal({ scale: 2, precision: 10, unsigned: true, }),
+	...auditableFields,
+	...tenantFields,
+});
+
+export type LedgerRecord = InferSelectModel<typeof ledgerRecord>;
+export type NewLedgerRecord = InferInsertModel<typeof ledgerRecord>;
+export type EditLedgerRecord = Partial<Pick<LedgerRecord, 'debit' | 'credit' | 'reference' | 'voucher' | 'accountId' | 'updatedBy'>>;

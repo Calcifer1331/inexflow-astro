@@ -1,0 +1,92 @@
+---
+import Alert from "@comp/Alert.astro";
+import FieldText from "@comp/FieldText.astro";
+import Layout from "@lay/Layout.astro";
+import { isInputError, actions } from "astro:actions";
+import { accountTypeOptions } from "@schema/account.schema";
+import SelectField from "@comp/SelectField.astro";
+import { findAllAccountsSubtypeBySelect } from "@db/account_subtype.repository";
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const result = Astro.getActionResult(actions.account.create);
+const inputErrors = isInputError(result?.error) ? result.error.fields : {};
+
+const accountsSubtype = await findAllAccountsSubtypeBySelect();
+---
+
+<Layout title="Cuentas">
+    {
+        result && result.error && !isInputError(result?.error) && (
+            <Alert type="danger">{result.error.message}</Alert>
+        )
+    }
+    {
+        result && result.data && (
+            <Alert type="success">
+                Cuenta {result.data.name} creada exitosa mente.
+            </Alert>
+        )
+    }
+    <form
+        action={actions.account.create}
+        method="POST"
+        class="needs-validation"
+        novalidate
+    >
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <FieldText
+                    label="Nombre"
+                    type="text"
+                    name="name"
+                    min="2"
+                    max="250"
+                    required
+                    errors={inputErrors.name}
+                />
+                <FieldText
+                    label="Descripción"
+                    type="text"
+                    name="description"
+                    min="2"
+                    max="250"
+                    required
+                    errors={inputErrors.description}
+                />
+            </div>
+            <div class="col-12 col-md-6">
+                <FieldText
+                    label="Código"
+                    type="number"
+                    name="code"
+                    min="1"
+                    max="99999"
+                    required
+                    errors={inputErrors.code}
+                />
+                <SelectField
+                    label="Subtipo de Cuentas"
+                    name="accountSubtypeId"
+                    errors={inputErrors.accountSubtypeId}
+                    options={accountsSubtype.map(
+                        ({ id, name, accountType, code }) => ({
+                            value: id,
+                            text: `${accountTypeOptions[accountType]}| ${code} | ${name}`,
+                        }),
+                    )}
+                />
+            </div>
+
+            <div class="d-grid">
+                <button
+                    type="submit"
+                    class="btn btn-success mx-auto"
+                    style="width: 35%;">Registrar</button
+                >
+            </div>
+        </div>
+    </form>
+</Layout>

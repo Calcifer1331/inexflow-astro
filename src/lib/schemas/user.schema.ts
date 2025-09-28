@@ -1,5 +1,5 @@
 import { z } from "astro:schema";
-import { stringBuilder, booleanBuilder, numBuilder, auditSchema, tenant } from "./common.schema";
+import { stringBuilder, booleanBuilder, numBuilder, historicalFields, tenant } from "./common.schema";
 
 export const userRoleValues = ['admin', 'businessman'] as const;
 
@@ -12,7 +12,7 @@ export const userSchema = z.object({
     password: stringBuilder("La contraseña", 8, 250, true),
     role: z.enum(userRoleValues, { message: "El rol del usuario es incorrecto" }).default('businessman'),
     isActive: booleanBuilder('El estado de activo'),
-}).merge(auditSchema).merge(tenant);
+}).merge(historicalFields).merge(tenant);
 
 
 export const loginSchema = userSchema.pick({
@@ -27,8 +27,8 @@ export type UserSchema = z.infer<typeof userSchema>;
 export function isActiveOptions(isActive: boolean) {
     return isActive ? "Activo" : "Deshabilitado";
 }
-
-export const userRoleOptions: Record<(typeof userRoleValues)[number], string> =
+export type UserRole = (typeof userRoleValues)[number]
+export const userRoleOptions: Record<UserRole, string> =
 {
     admin: 'Administrador',
     businessman: 'Empresario'

@@ -1,0 +1,62 @@
+---
+interface Props {
+    id: string | number;
+    segment: string;
+    name: string;
+}
+let { id, segment, name } = Astro.props as Props;
+---
+
+<div class="btn-group">
+    <a
+        class="btn btn-outline-primary"
+        type="button"
+        title="Ver informacion de Elemento"
+        href={`/${segment}/${id}`}
+    >
+        <svg
+            class="bi flex-shrink-0"
+            role="img"
+            aria-label="Ver informacion de Elemento"
+            width="24"
+            height="24"
+        >
+            <use href="/assets/svg/miscellaniaSprite.svg#fe-info"></use>
+        </svg>
+    </a>
+    <a
+        class="btn btn-primary"
+        type="button"
+        title="Editra Elemento"
+        href={`/${segment}/${id}/edit`}
+    >
+        <svg
+            class="bi flex-shrink-0"
+            role="img"
+            aria-label="Editra Elemento"
+            width="24"
+            height="24"
+        >
+            <use href="/assets/svg/miscellaniaSprite.svg#fe-edit"></use>
+        </svg>
+    </a>
+    <button
+        type="button"
+        class="btn btn-danger"
+        title="Eliminar Elemento"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+        data-bs-id={id}
+        data-bs-name={name}
+    >
+        <svg
+            class="bi flex-shrink-0"
+            role="img"
+            aria-label="Eliminar Elemento"
+            width="24"
+            height="24"
+        >
+            <use href="/assets/svg/miscellaniaSprite.svg#fe-trash"></use>
+        </svg>
+    </button>
+</div>

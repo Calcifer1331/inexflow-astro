@@ -104,7 +104,7 @@ export async function authenticateUser(email: string, password: string): Promise
 // }
 
 // export async function persistUser(user: NewAppUser) {
-//     user.passwordHash = await bcrypt.hash(user.passwordHash, await bcrypt.genSalt(10))
+// user.passwordHash = await bcrypt.hash(user.passwordHash, await bcrypt.genSalt(10))
 //     await db.insert(appUser).values(user).execute()
 // }
 

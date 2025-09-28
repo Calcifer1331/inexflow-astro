@@ -1,0 +1,60 @@
+---
+import ActionButton from "@comp/ActionButton.astro";
+import Layout from "@lay/Layout.astro";
+import { dateFormatter } from "@helper/format";
+import { findAccountSubtypeByIdAndBusinessIdForShow } from "@db/account_subtype.repository";
+import { accountTypeOptions } from "@schema/account.schema";
+
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const parseId = parseInt(Astro.params.id ?? "0");
+
+if (!parseId) return new Response(null, { status: 404 });
+
+const accountSubtype = await findAccountSubtypeByIdAndBusinessIdForShow(
+    parseId,
+    authenticatedUser.businessId,
+);
+
+if (!accountSubtype) return new Response(null, { status: 404 });
+
+const {
+    code,
+    description,
+    createdBy,
+    updatedBy,
+    name,
+    createdAt,
+    updatedAt,
+    accountType,
+    businessId,
+    id,
+} = accountSubtype;
+---
+
+<Layout title="Subtipo de Cuentas">
+    <h1>{name}</h1>
+    <p><strong>Codigo:</strong> {code}</p>
+    <p><strong>Descripcion:</strong> {description}</p>
+    <p>
+        <strong>Tipo de cuenta:</strong>
+        {accountTypeOptions[accountType]}
+    </p>
+    <p>
+        <strong>Creado:</strong>
+        {dateFormatter.format(createdAt)}, por {createdBy}
+    </p>
+    <p>
+        <strong>Ultima actualizacion:</strong>
+        {dateFormatter.format(updatedAt)}, por {updatedBy}
+    </p>
+    <ActionButton
+        action="edit"
+        href=`/tenants/accounts/subtypes/${parseId}/edit`
+    >
+        Editar
+    </ActionButton>
+</Layout>

@@ -8,6 +8,41 @@
       "when": 1758816726623,
       "tag": "0000_free_fallen_one",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1758858553623,
+      "tag": "0001_perpetual_black_panther",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1758916742817,
+      "tag": "0002_warm_living_mummy",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1758945577039,
+      "tag": "0003_third_karma",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1758946260447,
+      "tag": "0004_heavy_george_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1758947757642,
+      "tag": "0005_daily_karnak",
+      "breakpoints": true
     }
   ]
 }
