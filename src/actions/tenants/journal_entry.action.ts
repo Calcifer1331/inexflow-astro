@@ -8,7 +8,7 @@ import { journalCodeFormatter } from '@/lib/helpers/journal';
 
 export const journalEntry = {
     create: defineAction({
-        accept: "form",
+        accept: "json",
         input: createJournalEntrySchema,
         handler: async (createItem, { session }) => {
 

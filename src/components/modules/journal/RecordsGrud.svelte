@@ -14,35 +14,50 @@
     import ActionButton from "@/components/atoms/ActionButton.svelte";
     import { currencyFormatter } from "@/lib/helpers/format";
     import { Tween } from "svelte/motion";
+    import { formValidator } from "@/lib/helpers/formValidator.svelte";
+
+    let {
+        records = $bindable([]),
+        validateRecordField,
+        setRecordError,
+    }: {
+        records?: CreateLedgerRecordSchema[];
+        validateRecordField: () => void;
+        setRecordError: (error: string) => void;
+    } = $props();
 
     type Account = NonNullable<
         Awaited<ReturnType<typeof actions.account.findAll>>["data"]
     >[number];
-
-    let errors = $state<string | null>(null);
-
     let accounts: SvelteMap<
         Account["id"],
         Omit<Account, "id">
     > = new SvelteMap();
 
-    let formRecord = $state<Partial<CreateLedgerRecordSchema>>({
-        debit: 1,
-        credit: 0,
-    });
+    const { form, inputErrors, value, validateAll, validateField } =
+        formValidator(createLedgerRecordSchema, {
+            debit: 1,
+            credit: 0,
+        });
 
-    let records = $state<CreateLedgerRecordSchema[]>([]);
+    let errors = $state<string | null>(null);
+
+    // let formRecord = $state<Partial<CreateLedgerRecordSchema>>({
+    //     debit: 1,
+    //     credit: 0,
+    // });
+
     let indexToEdit = $state<number | null>(null);
+
     let debitTween = Tween.of(() =>
         records.reduce((pre, { debit }) => pre + debit, 0),
     );
     let creditTween = Tween.of(() =>
         records.reduce((pre, { credit }) => pre + credit, 0),
     );
-    let valanced = $derived(debitTween.target === creditTween.target);
 
-    let inputErrors: SvelteMap<keyof CreateLedgerRecordSchema, string[]> =
-        new SvelteMap();
+    let valanced = $derived(debitTween.target === creditTween.target);
+    $inspect(valanced);
 
     let modalEl = $state<HTMLDivElement | null>(null); // referencia al elemento del modal
     let bsModalInstance: any;
@@ -56,30 +71,19 @@
         data.forEach(({ id, ...others }) => accounts.set(id, others));
     }
 
-    function validateField(field: keyof CreateLedgerRecordSchema) {
-        const schema = createLedgerRecordSchema.shape[field];
-        const value = formRecord[field];
-
-        const result = schema.safeParse(value);
-        if (!result.success) {
-            let errors = result.error.errors.map((e) => e.message);
-            if (inputErrors.has(field)) {
-                const others = inputErrors.get(field);
-                if (others) errors.concat(others);
-            }
-            inputErrors.set(field, errors);
-        } else {
-            inputErrors.delete(field);
-        }
-    }
     function removeRecord(index: number) {
         records = records.filter((_, i) => i !== index);
     }
+
     function editRecord(index: number) {
         indexToEdit = index;
         const toEdit = records.at(index);
         if (!toEdit) return;
-        formRecord = { ...toEdit };
+        value.accountId = toEdit.accountId;
+        value.credit = toEdit.credit;
+        value.debit = toEdit.debit;
+        value.reference = toEdit.reference;
+        value.voucher = toEdit.voucher;
         showModal();
     }
 
@@ -87,55 +91,29 @@
         e: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement },
     ) {
         e.preventDefault();
-        console.log(inputErrors.values().toArray());
 
-        // si hay algun error
-        if (
-            inputErrors
-                .values()
-                .toArray()
-                .some((e) => e.length)
-        ) {
-            console.log("return");
-
-            return;
-        }
-
-        // bsModalInstance?.hide();
-        const result = createLedgerRecordSchemaV2.safeParse(formRecord);
-        if (!result.success) {
-            const errors = result.error.formErrors.fieldErrors;
-            Object.keys(errors).forEach((field) => {
-                inputErrors.set(
-                    field as keyof CreateLedgerRecordSchema,
-                    errors[field as keyof CreateLedgerRecordSchema] ?? [],
-                );
-            });
-            return;
-        } else {
-            Object.keys(formRecord).forEach((field) =>
-                inputErrors.delete(field as keyof CreateLedgerRecordSchema),
-            );
-        }
+        const parseData = validateAll();
 
         //todo bien
+        if (!parseData || form.hasErrors) return;
 
         if (indexToEdit !== null) {
-            records[indexToEdit] = result.data;
-        } else records.push(result.data);
+            records[indexToEdit] = parseData;
+        } else records.push({ ...parseData });
+
         hideModal();
     }
 
     function showModal() {
         bsModalInstance?.show();
+        validateRecordField();
+        // if (!valanced) setRecordError("La entrada no esta valanceado");
     }
     function hideModal() {
         bsModalInstance?.hide();
         indexToEdit = null;
-        formRecord = {
-            debit: 1,
-            credit: 0,
-        };
+        validateRecordField();
+        // if (!valanced) setRecordError("La entrada no esta valanceado");
     }
 
     onMount(async () => {
@@ -181,31 +159,6 @@
                     {#each records as { accountId, credit, debit, reference, voucher }, i}
                         <tr>
                             <td>
-                                <input
-                                    type="hidden"
-                                    name={`records[${i}].accountId`}
-                                    value={accountId}
-                                />
-                                <input
-                                    type="hidden"
-                                    name={`records[${i}].reference`}
-                                    value={reference}
-                                />
-                                <input
-                                    type="hidden"
-                                    name={`records[${i}].voucher`}
-                                    value={voucher}
-                                />
-                                <input
-                                    type="hidden"
-                                    name={`records[${i}].debit`}
-                                    value={debit}
-                                />
-                                <input
-                                    type="hidden"
-                                    name={`records[${i}].credit`}
-                                    value={credit}
-                                />
                                 {reference}
                             </td>
                             <td>
@@ -299,7 +252,7 @@
                                 label="Referencia"
                                 min="2"
                                 max="250"
-                                bind:value={formRecord.reference}
+                                bind:value={value.reference}
                                 errors={inputErrors.get("reference")}
                                 oninput={() => validateField("reference")}
                             />
@@ -308,7 +261,7 @@
                                 label="Comprobante"
                                 min="2"
                                 max="250"
-                                bind:value={formRecord.voucher}
+                                bind:value={value.voucher}
                                 errors={inputErrors.get("voucher")}
                                 oninput={() => validateField("voucher")}
                             />
@@ -316,10 +269,10 @@
                                 name="accountId"
                                 label="Cuentas"
                                 onchange={(e) => {
-                                    formRecord.accountId = parseFloat(
+                                    value.accountId = parseFloat(
                                         e.currentTarget.value,
                                     );
-                                    if (!accounts.has(formRecord.accountId)) {
+                                    if (!accounts.has(value.accountId)) {
                                         inputErrors.set("accountId", [
                                             "El id de la cuenta no es valido.",
                                         ]);
@@ -343,10 +296,10 @@
                                 min="0.00"
                                 step="0.01"
                                 bind:value={
-                                    () => formRecord.debit,
+                                    () => value.debit,
                                     (v) => {
-                                        formRecord.debit = v;
-                                        formRecord.credit = v === 0 ? 1 : 0;
+                                        value.debit = v;
+                                        value.credit = v === 0 ? 1 : 0;
                                     }
                                 }
                                 errors={inputErrors.get("debit")}
@@ -359,10 +312,10 @@
                                 min="0.00"
                                 step="0.01"
                                 bind:value={
-                                    () => formRecord.credit,
+                                    () => value.credit,
                                     (v) => {
-                                        formRecord.credit = v;
-                                        formRecord.debit = v === 0 ? 1 : 0;
+                                        value.credit = v;
+                                        value.debit = v === 0 ? 1 : 0;
                                     }
                                 }
                                 errors={inputErrors.get("credit")}
@@ -372,7 +325,7 @@
                                 >Agregar</button
                             >
                             <pre>
-                                {JSON.stringify(formRecord, null, 2)}
+                                {JSON.stringify(value, null, 2)}
                                 {JSON.stringify(indexToEdit, null, 2)}
                             </pre>
                         </div>

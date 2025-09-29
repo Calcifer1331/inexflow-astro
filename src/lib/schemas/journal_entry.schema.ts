@@ -44,7 +44,7 @@ export type DeleteLedgerRecordSchema = DeleteJournalEntrySchema;
 
 
 export const createJournalEntrySchema = editJournalEntrySchema.omit({ id: true, code: true }).extend({
-    records: z.array(createLedgerRecordSchemaV2).min(2, { message: 'Tiene que haber minimo 2 registros' })
+    records: z.array(createLedgerRecordSchemaV2, { required_error: "La lista de registros es necesaria", invalid_type_error: 'El tipo de lista de registro es invalida' }).min(2, { message: 'Tiene que haber minimo 2 registros' })
 });
 
 export type CreateJournalEntrySchema = z.infer<typeof createJournalEntrySchema>;
