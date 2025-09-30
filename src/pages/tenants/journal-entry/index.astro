@@ -1,14 +1,9 @@
 ---
-import Alert from "@comp/Alert.astro";
-import FieldText from "@comp/FieldText.astro";
+import Alert from "@atom/Alert.astro";
 import Layout from "@lay/Layout.astro";
 import JournalEntryForm from "@mod/journal/JournalEntryForm.svelte";
 import { isInputError, actions } from "astro:actions";
-import { accountTypeOptions } from "@schema/account.schema";
-import SelectField from "@comp/SelectField.astro";
-import { journalCodeFormatter } from "@helper/journal";
-import { findLastJournalEntryCode } from "@db/journal_entry.repository";
-import { shortDateFormatter, systemDateFormatter } from "@/lib/helpers/format";
+import { findNextJournalEntryCodeAndId } from "@db/journal_entry.repository";
 const { authenticatedUser } = Astro.locals;
 
 if (authenticatedUser.role !== "businessman")
@@ -17,12 +12,13 @@ if (authenticatedUser.role !== "businessman")
 const result = Astro.getActionResult(actions.journalEntry.create);
 const inputErrors = isInputError(result?.error) ? result.error.fields : {};
 
-const lastJournalCode = await findLastJournalEntryCode(
+const lastJournalCode = await findNextJournalEntryCodeAndId(
     authenticatedUser.businessId,
 );
 ---
 
 <Layout title="Entrada de Diario">
+    <!-- <pre>{JSON.stringify({lastJournalCode},null,2)}</pre> -->
     {
         result &&
             (result.error ? (
@@ -47,5 +43,9 @@ const lastJournalCode = await findLastJournalEntryCode(
                 )
             ))
     }
-    <JournalEntryForm client:load transition:persists {lastJournalCode} />
+    <JournalEntryForm
+        client:load
+        transition:persists
+        lastJournalCode={lastJournalCode.code}
+    />
 </Layout>

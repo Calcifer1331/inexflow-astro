@@ -1,5 +1,5 @@
 ---
-import ActionButton from "@comp/ActionButton.astro";
+import ActionButton from "@atom/ActionButton.astro";
 import Layout from "@lay/Layout.astro";
 import { dateFormatter } from "@helper/format";
 import { findAccountSubtypeByIdAndBusinessIdForShow } from "@db/account_subtype.repository";
@@ -51,10 +51,7 @@ const {
         <strong>Ultima actualizacion:</strong>
         {dateFormatter.format(updatedAt)}, por {updatedBy}
     </p>
-    <ActionButton
-        action="edit"
-        href=`/tenants/accounts/subtypes/${parseId}/edit`
-    >
+    <ActionButton action="edit" href=`/tenants/account-types/${parseId}/edit`>
         Editar
     </ActionButton>
 </Layout>

@@ -1,0 +1,115 @@
+---
+import ActionButton from "@atom/ActionButton.astro";
+import Layout from "@lay/Layout.astro";
+import { currencyFormatter, shortDateFormatter } from "@helper/format";
+import { findJournal } from "@db/journal_entry.repository";
+import Table from "@mod/CRUD/Table.astro";
+import ActionButtons from "@mod/CRUD/ActionButtons.astro";
+import { journalCodeFormatter } from "@helper/journal";
+import FieldText from "@/components/atoms/FieldText.astro";
+import { z } from "astro/zod";
+
+const { authenticatedUser } = Astro.locals;
+
+if (authenticatedUser.role !== "businessman")
+    return new Response(null, { status: 403 });
+
+const paramYaer = Astro.url.searchParams.get("year");
+
+let year = new Date(Date.now()).getFullYear();
+
+if (paramYaer) {
+    const parseYaer = z.coerce
+        .number()
+        .min(1500)
+        .max(3000)
+        .safeParse(paramYaer);
+    if (!parseYaer.error) year = parseYaer.data;
+}
+
+const journals = await findJournal(authenticatedUser.businessId, year);
+---
+
+<Layout title="Productos">
+    <div class="row">
+        <div class="col">
+            <ActionButton action="new" href="/tenants/journal-entry">
+                Agregar Entrada
+            </ActionButton>
+        </div>
+        <div class="col">
+            <form action="#" method="get">
+                <FieldText
+                    label="Periodo Contable"
+                    value={year}
+                    name="year"
+                    type="number"
+                    max="3000"
+                    min="1500"
+                />
+            </form>
+        </div>
+    </div>
+
+    <Table>
+        <Fragment slot="head">
+            <th></th>
+            <th>Fecha</th>
+            <th>Comprobante</th>
+            <th>Cuenta</th>
+            <th>Referencia</th>
+            <th>Debíto</th>
+            <th>Credito</th>
+            <th>Acciones</th>
+        </Fragment>
+        <Fragment slot="body">
+            {
+                journals.length ? (
+                    journals.map(
+                        ({ account, credit, debit, entry, reference }, i) => (
+                            <tr>
+                                <td>{i + 1}</td>
+                                <td>{shortDateFormatter.format(entry.date)}</td>
+                                <td>
+                                    {journalCodeFormatter.format(
+                                        entry.code,
+                                        entry.year ?? entry.date.getFullYear(),
+                                    )}
+                                </td>
+                                <td>{account.name}</td>
+                                <td>{reference}</td>
+                                <td>
+                                    {parseFloat(debit ?? "0")
+                                        ? currencyFormatter.format(
+                                              parseFloat(debit ?? "0"),
+                                          )
+                                        : ""}
+                                </td>
+                                <td>
+                                    {parseFloat(credit ?? "0")
+                                        ? currencyFormatter.format(
+                                              parseFloat(credit ?? "0"),
+                                          )
+                                        : ""}
+                                </td>
+                                <td>
+                                    <ActionButtons
+                                        id={entry.id}
+                                        name={entry.name}
+                                        segment="tenants/products"
+                                    />
+                                </td>
+                            </tr>
+                        ),
+                    )
+                ) : (
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            No hay registros.
+                        </td>
+                    </tr>
+                )
+            }
+        </Fragment>
+    </Table>
+</Layout>

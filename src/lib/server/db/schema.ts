@@ -405,7 +405,6 @@ export type EditJournalEntry = Partial<Pick<JournalEntry, 'date' | 'code' | 'des
  */
 export const ledgerRecord = mysqlTable('ledger_record', {
 	id: bigint({ mode: 'number', unsigned: true }).autoincrement().primaryKey(),
-	voucher: varchar({ length: 255 }).notNull(),
 	reference: varchar({ length: 255 }).notNull(),
 	accountId: bigint({ mode: 'number', unsigned: true }).notNull().references(() => account.id, { onDelete: 'cascade' }),
 	journalEntryId: bigint({ mode: 'number', unsigned: true }).notNull().references(() => journalEntry.id, { onDelete: 'cascade' }),
@@ -417,4 +416,4 @@ export const ledgerRecord = mysqlTable('ledger_record', {
 
 export type LedgerRecord = InferSelectModel<typeof ledgerRecord>;
 export type NewLedgerRecord = InferInsertModel<typeof ledgerRecord>;
-export type EditLedgerRecord = Partial<Pick<LedgerRecord, 'debit' | 'credit' | 'reference' | 'voucher' | 'accountId' | 'updatedBy'>>;
+export type EditLedgerRecord = Partial<Pick<LedgerRecord, 'debit' | 'credit' | 'reference' | 'accountId' | 'updatedBy'>>;

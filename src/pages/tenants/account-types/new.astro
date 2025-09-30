@@ -1,6 +1,6 @@
 ---
-import Alert from "@comp/Alert.astro";
-import FieldText from "@comp/FieldText.astro";
+import Alert from "@atom/Alert.astro";
+import FieldText from "@atom/FieldText.astro";
 import Layout from "@lay/Layout.astro";
 import { isInputError, actions } from "astro:actions";
 import {
@@ -8,7 +8,7 @@ import {
     accountTypeOptions,
     accountTypeValues,
 } from "@schema/account.schema";
-import SelectField from "@comp/SelectField.astro";
+import SelectField from "@atom/SelectField.astro";
 const { authenticatedUser } = Astro.locals;
 
 if (authenticatedUser.role !== "businessman")

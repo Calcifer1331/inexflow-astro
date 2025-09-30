@@ -1,12 +1,12 @@
 ---
-import Alert from "@/components/Alert.astro";
-import FieldText from "@/components/FieldText.astro";
-import Layout from "@/layouts/Layout.astro";
-import { findByIdAndBusinessIdAndTypeForEdit } from "@/lib/server/db/item.repository";
+import Alert from "@atom/Alert.astro";
+import FieldText from "@atom/FieldText.astro";
+import Layout from "@lay/Layout.astro";
+import { findByIdAndBusinessIdAndTypeForEdit } from "@db/item.repository";
 import { isInputError, actions } from "astro:actions";
-import { type ItemType } from "@lib/schemas/item.schema";
-import { findAll } from "@/lib/server/db/measure_unit.repository";
-import SelectField from "@/components/SelectField.astro";
+import { type ItemType } from "@schema/item.schema";
+import { findAll } from "@db/measure_unit.repository";
+import SelectField from "@atom/SelectField.astro";
 const { authenticatedUser } = Astro.locals;
 
 if (authenticatedUser.role !== "businessman")

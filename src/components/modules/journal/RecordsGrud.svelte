@@ -1,8 +1,8 @@
 <script lang="ts">
-    import Alert from "@/components/Alert.svelte";
-    import FieldText from "@/components/FieldText.svelte";
-    import LinkButton from "@/components/atoms/ActionLink.svelte";
-    import SelectField from "@/components/SelectField.svelte";
+    import Alert from "@atom/Alert.svelte";
+    import FieldText from "@atom/FieldText.svelte";
+    import LinkButton from "@atom/ActionLink.svelte";
+    import SelectField from "@atom/SelectField.svelte";
     import {
         createLedgerRecordSchema,
         createLedgerRecordSchemaV2,
@@ -11,10 +11,10 @@
     import { actions } from "astro:actions";
     import { onDestroy, onMount } from "svelte";
     import { SvelteMap } from "svelte/reactivity";
-    import ActionButton from "@/components/atoms/ActionButton.svelte";
-    import { currencyFormatter } from "@/lib/helpers/format";
+    import ActionButton from "@atom/ActionButton.svelte";
+    import { currencyFormatter } from "@helper/format";
     import { Tween } from "svelte/motion";
-    import { formValidator } from "@/lib/helpers/formValidator.svelte";
+    import { formValidator } from "@helper/formValidator.svelte";
 
     let {
         records = $bindable([]),
@@ -83,7 +83,6 @@
         value.credit = toEdit.credit;
         value.debit = toEdit.debit;
         value.reference = toEdit.reference;
-        value.voucher = toEdit.voucher;
         showModal();
     }
 
@@ -156,7 +155,7 @@
             </thead>
             <tbody>
                 {#if records && records.length}
-                    {#each records as { accountId, credit, debit, reference, voucher }, i}
+                    {#each records as { accountId, credit, debit, reference }, i}
                         <tr>
                             <td>
                                 {reference}
@@ -256,15 +255,6 @@
                                 errors={inputErrors.get("reference")}
                                 oninput={() => validateField("reference")}
                             />
-                            <FieldText
-                                name="voucher"
-                                label="Comprobante"
-                                min="2"
-                                max="250"
-                                bind:value={value.voucher}
-                                errors={inputErrors.get("voucher")}
-                                oninput={() => validateField("voucher")}
-                            />
                             <SelectField
                                 name="accountId"
                                 label="Cuentas"
@@ -324,10 +314,10 @@
                             <button class="btn btn-primary w-100"
                                 >Agregar</button
                             >
-                            <pre>
+                            <!-- <pre>
                                 {JSON.stringify(value, null, 2)}
                                 {JSON.stringify(indexToEdit, null, 2)}
-                            </pre>
+                            </pre> -->
                         </div>
                     </form>
                 </div>

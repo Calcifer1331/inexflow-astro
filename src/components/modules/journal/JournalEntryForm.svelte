@@ -1,13 +1,13 @@
 <script lang="ts">
-    import FieldText from "@/components/FieldText.svelte";
+    import FieldText from "@atom/FieldText.svelte";
     import RecordsGrud from "./RecordsGrud.svelte";
-    import { journalCodeFormatter } from "@/lib/helpers/journal";
-    import Form from "@/components/atoms/Form.svelte";
-    import { formValidator } from "@/lib/helpers/formValidator.svelte";
-    import { createJournalEntrySchema } from "@/lib/schemas/journal_entry.schema";
-    import { systemDateFormatter } from "@/lib/helpers/format";
-    import Alert from "@/components/Alert.svelte";
-    import { actions } from "astro:actions";
+    import { journalCodeFormatter } from "@helper/journal";
+    import Form from "@atom/Form.svelte";
+    import { formValidator } from "@helper/formValidator.svelte";
+    import { createJournalEntrySchema } from "@schema/journal_entry.schema";
+    import { systemDateFormatter } from "@helper/format";
+    import Alert from "@atom/Alert.svelte";
+    import { actions, isInputError } from "astro:actions";
 
     let { lastJournalCode }: { lastJournalCode: number } = $props();
     let thisDate = new Date(Date.now());
@@ -94,7 +94,7 @@
             />
             <FieldText
                 label="Fecha"
-                type="date"
+                type="datetime-local"
                 name="date"
                 required
                 bind:value={value.date}
@@ -116,9 +116,9 @@
             </ul>
         </Alert>
     {/if}
-    <pre>
+    <!-- <pre>
         {JSON.stringify({ form, value }, null, 2)}
-    </pre>
+    </pre> -->
     <div class="row">
         <div class="d-grid">
             <button

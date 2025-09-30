@@ -1,10 +1,9 @@
 ---
-import ActionButton from "@/components/ActionButton.astro";
-import Alert from "@/components/Alert.astro";
-import Layout from "@/layouts/Layout.astro";
-import { currencyFormatter } from "@/lib/helpers/format";
-import { type ItemType } from "@/lib/server/db/schema";
-import { findAllByBusinessIdAndType } from "@/lib/server/db/item.repository";
+import ActionButton from "@atom/ActionButton.astro";
+import Alert from "@atom/Alert.astro";
+import Layout from "@lay/Layout.astro";
+import { currencyFormatter } from "@helper/format";
+import { findAllByBusinessIdAndType } from "@db/item.repository";
 import { actions, isInputError } from "astro:actions";
 import DeleteModal from "@mod/CRUD/DeleteModal.astro";
 import Table from "@mod/CRUD/Table.astro";

@@ -13,6 +13,10 @@ export async function createLedgerRecord(data: NewLedgerRecord) {
     return await db.insert(ledgerRecord)
         .values(data);
 }
+export async function createLedgerRecordBatch(data: NewLedgerRecord[]) {
+    return await db.insert(ledgerRecord)
+        .values(data);
+}
 
 export async function findLedgerRecordByIdAndBusinessIdForEdit(id: number, businessId: UUID) {
     return await db.select()

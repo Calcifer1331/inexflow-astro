@@ -1,7 +1,9 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
     import type { SvelteHTMLElements } from "svelte/elements";
-    import MiscellaniaSprite, { type Action } from "./MiscellaniaSprite.svelte";
+    import MiscellaniaSprite, {
+        type Action,
+    } from "../modules/MiscellaniaSprite.svelte";
     interface Props {
         action: Action;
         children?: Snippet;

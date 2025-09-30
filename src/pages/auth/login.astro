@@ -1,9 +1,9 @@
 ---
 import Layout from "@lay/Default.astro";
-import FieldText from "@comp/FieldText.astro";
+import FieldText from "@atom/FieldText.astro";
 import { actions } from "astro:actions";
 import { isInputError } from "astro:actions";
-import Alert from "@/components/Alert.astro";
+import Alert from "@atom/Alert.astro";
 
 const result = Astro.getActionResult(actions.auth.login);
 

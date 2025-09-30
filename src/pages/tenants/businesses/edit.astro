@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import { findById } from "@/lib/server/db/business.repository";
 import { dateFormatter } from "@helper/format";
-import FieldText from "@/components/FieldText.astro";
+import FieldText from "@atom/FieldText.astro";
 const { authenticatedUser } = Astro.locals;
 
 if (authenticatedUser.role !== "businessman")

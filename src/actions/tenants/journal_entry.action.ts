@@ -1,9 +1,9 @@
 import { createJournalEntrySchema } from '@schema/journal_entry.schema';
 import type { JournalEntry, NewJournalEntry, NewLedgerRecord, LedgerRecord } from '@db/schema';
-import { updateAccountSubtypeByIdAndBusinessId, deleteAccountSubtypeByIdAndBusinessId, createAccountSubtype } from '@db/account_subtype.repository';
 import { ActionError, defineAction } from 'astro:actions';
 import { validateUserSession } from '../utils';
-import { findLastJournalEntryCode } from '@/lib/server/db/journal_entry.repository';
+import { findNextJournalEntryCodeAndId, createJournalEntry } from '@db/journal_entry.repository';
+import { createLedgerRecord, createLedgerRecordBatch } from '@db/ledger_record.repository';
 import { journalCodeFormatter } from '@/lib/helpers/journal';
 
 export const journalEntry = {
@@ -14,27 +14,27 @@ export const journalEntry = {
 
             const user = await validateUserSession(session, 'businessman');
 
-
             try {
-                // await createAccountSubtype(data);
 
-                const lastJournalCode = await findLastJournalEntryCode(user.businessId);
+                const { code, id } = await findNextJournalEntryCodeAndId(user.businessId, createItem.date.getFullYear());
 
-                // const data: NewAccountSubtype = {
-                //     ...createItem,
-                //     businessId: authenticatedUser.businessId,
-                //     createdBy: authenticatedUser.email,
-                //     updatedBy: authenticatedUser.email,
-                // };
-                const data = createItem;
+                const newJournalEntry: NewJournalEntry = { ...createItem, id, businessId: user.businessId, code, createdBy: user.email };
+                const newLedgerRecords: NewLedgerRecord[] = createItem.records.map(record => ({
+                    ...record,
+                    debit: record.debit.toFixed(2),
+                    credit: record.credit.toFixed(2),
+                    journalEntryId: id,
+                    businessId: user.businessId,
+                    createdBy: user.email,
+                } as NewLedgerRecord))
 
-                console.log(data);
+                await createJournalEntry(newJournalEntry, newLedgerRecords);
 
-                const code = journalCodeFormatter.format(lastJournalCode, createItem.date.getFullYear())
                 return {
                     success: true,
-                    code,
+                    code: journalCodeFormatter.format(code, createItem.date.getFullYear()),
                 }
+
             } catch (error) {
                 console.error("Login Error:", error);
                 throw new ActionError({

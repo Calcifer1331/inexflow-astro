@@ -1,10 +1,10 @@
 ---
-import Alert from "@/components/Alert.astro";
-import FieldText from "@/components/FieldText.astro";
-import Layout from "@/layouts/Layout.astro";
+import Alert from "@atom/Alert.astro";
+import FieldText from "@atom/FieldText.astro";
+import Layout from "@lay/Layout.astro";
 import { isInputError, actions } from "astro:actions";
-import { type ItemType } from "@lib/schemas/item.schema";
-import SelectField from "@/components/SelectField.astro";
+import { type ItemType } from "@schema/item.schema";
+import SelectField from "@atom/SelectField.astro";
 import { findAll } from "@/lib/server/db/measure_unit.repository";
 const { authenticatedUser } = Astro.locals;
 
