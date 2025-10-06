@@ -1,0 +1,110 @@
+---
+import Boxes from "@svg/boxes.svg";
+import Business from "@svg/business.svg";
+import Cliente from "@svg/clients.svg";
+import Employess from "@svg/employees.svg";
+import Service from "@svg/services.svg";
+import Suppliers from "@svg/suppliers.svg";
+import Supplies from "@svg/supplies.svg";
+import Transactions from "@svg/transactions.svg";
+import Users from "@svg/users.svg";
+import Header, { type Props as HedaerProps } from "./Header.astro";
+interface Props extends HedaerProps {}
+const { name, role } = Astro.props as Props;
+---
+
+<div class="sidebar">
+    <!-- Header con imagen de fondo -->
+    <Header {name} {role} />
+
+    <!-- Sección Gestión -->
+    <div class="menu-section">
+        <h4 class="section-title">Gestión</h4>
+        <a href="#" class="menu-item active">
+            <div class="icon-container">
+                <Business />
+            </div>
+            Negocio
+            <span class="arrow">&gt;</span>
+        </a>
+        <a href="#empleados" class="menu-item">
+            <div class="icon-container">
+                <Employess />
+            </div>
+            Empleados
+            <span class="arrow">&gt;</span>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="icon-container">
+                <Transactions />
+            </div>
+            Transacciones
+            <span class="arrow">&gt;</span>
+        </a>
+    </div>
+
+    <hr />
+
+    <!-- Sección Inventario -->
+    <div class="menu-section">
+        <h4 class="section-title">Inventario</h4>
+        <a href="#" class="menu-item">
+            <div class="icon-container">
+                <Boxes />
+            </div>
+            Productos
+            <span class="arrow">&gt;</span>
+        </a>
+
+        <!-- Servicios con desplegable -->
+        <div class="submenu">
+            <a href="#" class="menu-item submenu-toggle">
+                <div class="icon-container">
+                    <Service />
+                </div>
+                Servicios
+                <span class="arrow">&gt;</span>
+            </a>
+            <div class="submenu-items">
+                <a href="#servicios" class="submenu-item">Entrada</a>
+                <a href="#" class="submenu-item">Salida</a>
+            </div>
+        </div>
+
+        <a href="#" class="menu-item">
+            <div class="icon-container">
+                <Supplies />
+            </div>
+            Suministros
+            <span class="arrow">&gt;</span>
+        </a>
+    </div>
+
+    <hr />
+
+    <!-- Sección Relaciones -->
+    <div class="menu-section">
+        <h4 class="section-title">Relaciones</h4>
+        <a href="#" class="menu-item">
+            <div class="icon-container">
+                <Cliente />
+            </div>
+            Clientes
+            <span class="arrow">&gt;</span>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="icon-container">
+                <Suppliers />
+            </div>
+            Proveedores
+            <span class="arrow">&gt;</span>
+        </a>
+    </div>
+
+    <!-- Logout -->
+    <div class="logout-container">
+        <button class="btn btn-logout"
+            ><i class="bi bi-power"></i> Cerrar sesión</button
+        >
+    </div>
+</div>

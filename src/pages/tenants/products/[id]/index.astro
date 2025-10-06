@@ -46,10 +46,14 @@ const recipes = await findAllOfItemByOuyputIdByBusinessIdAndType(
     </pre>
     <h1>{name}</h1>
     <p><strong>Identificador:</strong> {parseId}</p>
-    <p><strong>Costo:</strong> {currencyFormatter.format(parseInt(cost))}</p>
+    <p><strong>Costo:</strong> {currencyFormatter.format(parseFloat(cost))}</p>
     <p>
         <strong>Presio de Venta:</strong>
-        {sellingPrice ? currencyFormatter.format(parseInt(sellingPrice)) : "--"}
+        {
+            sellingPrice
+                ? currencyFormatter.format(parseFloat(sellingPrice))
+                : "--"
+        }
     </p>
     <p>
         <strong>Cantidad en Inventario:</strong>

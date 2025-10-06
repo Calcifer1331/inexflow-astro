@@ -1,0 +1,82 @@
+.services-grid {
+     display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+
+  max-height: 78vh; /* ajusta según tu diseño */
+  overflow-y: auto;
+}
+
+/* Encapsulamos los cards con una clase propia para no interferir con el sidebar */
+.service-card {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-hover-shadow);
+}
+
+.service-card .card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.service-card .card-header .icon {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-right: 1rem;
+}
+
+.service-card .company-name {
+  font-weight: var(--font-bold);
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.service-card .service-type {
+  font-size: var(--small-size);
+  font-weight: var(--font-medium);
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.service-card .service-desc {
+  font-size: var(--text-size);
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.service-card .card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--small-size);
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9; /* más claro que var(--border-color) para simular ejemplo */
+}
+
+.service-card .status {
+  font-weight: var(--font-bold);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  color: white;
+  font-size: var(--small-size);
+}
+
+.service-card .status.activo {
+  background: var(--status-active);
+}
+
+.service-card .status.inactivo {
+  background: var(--status-inactive);
+}

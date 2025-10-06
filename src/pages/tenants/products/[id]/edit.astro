@@ -31,29 +31,28 @@ const { cost, minStock, name, measureUnitId, sellingPrice, stock } = product;
 
 <Layout title="Producto">
     {
-        result && result.error && (
-            <Alert type="danger">
-                    {!isInputError(result?.error) ? (
-                        result.error.message
-                    ) : (
-                        <span>Error al editar el Producto:</span>
-                        <ul class="mb-0">
-                            {inputErrors.id &&
-                                inputErrors.id.map((error) => (
-                                    <li> {error}</li>
-                                ))}
-                            {inputErrors.type &&
-                                inputErrors.type.map((error) => (
-                                    <li> {error}</li>
-                                ))}
-                        </ul>
-                    )}
-            </Alert>
-        )
-    }
-    {
-        result && result.data && (
-            <Alert type="success">{name} fue actualuzado exitosamente!!</Alert>
+        result && ( 
+            result.error ? (
+                <Alert type="danger">
+                        {!isInputError(result?.error) ? (
+                            result.error.message
+                        ) : (
+                            <span>Error al editar el Producto:</span>
+                            <ul class="mb-0">
+                                {inputErrors.id &&
+                                    inputErrors.id.map((error) => (
+                                        <li> {error}</li>
+                                    ))}
+                                {inputErrors.type &&
+                                    inputErrors.type.map((error) => (
+                                        <li> {error}</li>
+                                    ))}
+                            </ul>
+                        )}
+                </Alert>
+            ) : (
+                <Alert type="success">{name} fue actualuzado exitosamente!!</Alert>
+            )
         )
     }
     <form

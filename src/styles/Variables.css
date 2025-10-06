@@ -1,0 +1,78 @@
+:root{
+--font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+--font-secondary: 'Reboto', sans-serif;
+
+
+--h1-size: 2.2rem;
+--h2-size: 1.8rem;
+--h3-size: 1.5rem;
+--h4-size: 1.5rem;
+--text-size: 1rem;
+--small-size: 0.875rem;
+
+--font-bold: 700;
+--font-medium: 500; 
+--font-regular: 400;
+
+
+--sidebar-bg: #1f1f2f;
+--sidebar-text: #e6e7e9;
+--sidebar-active: #61dafb;
+--sidebar-hover: rgba(97, 218, 251, 0.2);
+
+--primary: #61dafb;
+--primary-hover: #3aa0d9;
+--secondary: #f87171;
+--secondary-hover: #d65c5c;
+
+--background: #f0f4f8;
+--card-bg: #ffffff;
+--text-colorz: #333;
+--text-secondary: #555;
+--border-color: #ccc;
+
+--radius: 6px;
+--radius-pill: 16px; 
+
+--shadow-soft: 0 4px 8px rgba(0,0,0,0.1);
+
+--card-bg: #ffffff;
+--card-radius: 12px; 
+--card-shadow: 0 4px 6px rgba(0,0,0,0.05);
+--card-hover-shadow: 0 10px 15px rgba(0,0,0,0.1);
+--primary-color: #4f46e5;
+--text-color: #334155; 
+--text-secondary: #64748b; 
+--status-active: #10b981; 
+--status-inactive: #ef4444;
+
+--btn-create-bg: #dcfce7;
+--btn-create-color: #166534;
+--btn-create-hover: #bbf7d0;
+
+--btn-view-bg: #e0e7ff;
+--btn-view-color: #3730a3;
+--btn-view-hover: #c7d2fe;
+
+--btn-edit-bg: #fef3c7;
+--btn-edit-color: #b45309;
+--btn-edit-hover: #fde68a;
+
+--btn-delete-bg: #fee2e2;
+--btn-delete-color: #b91c1c;
+--btn-delete-hover: #fecaca;
+
+  /* Tamaños */
+  --btn-small: 0.85rem;
+  --btn-medium: 0.95rem;
+
+  /* Bordes y radio */
+--btn-radius: 8px;
+--btn-radius-lg: 16px;
+
+--spacing-xs: 4px; 
+--spaccin-sm: 8px;
+--spacing-md: 12px; 
+--spacing-lg: 16px;
+--spacing-xl: 20px;
+}

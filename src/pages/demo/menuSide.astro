@@ -1,0 +1,181 @@
+---
+import "@css/global.css";
+
+import SideBar from "@mod/sidebar/SideBar.astro";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+  </head>
+
+  <body>
+    <SideBar name="Yoseph" role="admin" />
+
+    <!-- Contenido -->
+    <div class="content">
+      <div class="page-header">
+        <h1 id="page-title">Negocio</h1>
+        <nav class="breadcrumb" id="breadcrumb">
+          Inicio / Inventario / Servicios
+        </nav>
+      </div>
+
+      <section id="empleados" class="tab-content">
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="card-header">
+              <div class="icon"><i class="bi bi-person-circle"></i></div>
+              <div class="company-name">Juan Pérez</div>
+            </div>
+            <div class="service-type">Cargo: Cajero</div>
+            <div class="service-desc">
+              Encargado de la atención en caja y manejo de efectivo.
+            </div>
+            <div class="card-footer">
+              <span class="status activo">Activo</span>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="card-header">
+              <div class="icon"><i class="bi bi-person-circle"></i></div>
+              <div class="company-name">María Gómez</div>
+            </div>
+            <div class="service-type">Cargo: Vendedora</div>
+            <div class="service-desc">
+              Asesora de ventas en el área de electrodomésticos.
+            </div>
+            <div class="card-footer">
+              <span class="status inactivo">Inactivo</span>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="card-header">
+              <div class="icon"><i class="bi bi-person-circle"></i></div>
+              <div class="company-name">Carlos Torres</div>
+            </div>
+            <div class="service-type">Cargo: Repartidor</div>
+            <div class="service-desc">
+              Responsable de entregar productos a domicilio.
+            </div>
+            <div class="card-footer">
+              <span class="status activo">Activo</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicios" class="tab-content">
+        <div class="services-grid">
+          <!-- Card Servicio -->
+          <div class="service-card">
+            <div class="card-header">
+              <i class="bi bi-lightning-charge icon"></i>
+              <div class="company-name">INFRUJATE, ESSA</div>
+            </div>
+            <div class="service-type">Pago de Luz</div>
+            <div class="service-desc">
+              Pago de servicio eléctrico, DEO/ISA, DEOCSA
+            </div>
+            <div class="card-footer">
+              <div>Disponible</div>
+              <div class="status activo">Activo</div>
+            </div>
+          </div>
+
+          <!-- Card Servicio -->
+          <div class="service-card">
+            <div class="card-header">
+              <i class="bi bi-droplet icon"></i>
+              <div class="company-name">DÁMAGUA</div>
+            </div>
+            <div class="service-type">Pago de Agua</div>
+            <div class="service-desc">Pago de servicio de agua potable</div>
+            <div class="card-footer">
+              <div>Disponible</div>
+              <div class="status activo">Activo</div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="card-header">
+              <i class="bi bi-droplet icon"></i>
+              <div class="company-name">DÁMAGUA</div>
+            </div>
+            <div class="service-type">Pago de Agua</div>
+            <div class="service-desc">Pago de servicio de agua potable</div>
+            <div class="card-footer">
+              <div>Disponible</div>
+              <div class="status activo">Activo</div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="card-header">
+              <i class="bi bi-droplet icon"></i>
+              <div class="company-name">DÁMAGUA</div>
+            </div>
+            <div class="service-type">Pago de Agua</div>
+            <div class="service-desc">Pago de servicio de agua potable</div>
+            <div class="card-footer">
+              <div>Disponible</div>
+              <div class="status activo">Activo</div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="card-header">
+              <i class="bi bi-droplet icon"></i>
+              <div class="company-name">DÁMAGUA</div>
+            </div>
+            <div class="service-type">Pago de Agua</div>
+            <div class="service-desc">Pago de servicio de agua potable</div>
+            <div class="card-footer">
+              <div>Disponible</div>
+              <div class="status activo">Activo</div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="card-header">
+              <i class="bi bi-droplet icon"></i>
+              <div class="company-name">DÁMAGUA</div>
+            </div>
+            <div class="service-type">Pago de Agua</div>
+            <div class="service-desc">Pago de servicio de agua potable</div>
+            <div class="card-footer">
+              <div>Disponible</div>
+              <div class="status activo">Activo</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+
+  <script>
+    // Activar menú
+    const menuItems = document.querySelectorAll(".menu-item");
+    menuItems.forEach((item) => {
+      item.addEventListener("click", function (e) {
+        if (!this.classList.contains("submenu-toggle")) {
+          menuItems.forEach((i) => i.classList.remove("active"));
+          this.classList.add("active");
+        }
+      });
+    });
+
+    // Submenu toggle
+    const submenuToggle = document.querySelector(".submenu-toggle");
+    const submenuItems = document.querySelector(".submenu-items");
+    submenuToggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      submenuItems.classList.toggle("show");
+    });
+  </script>
+</html>

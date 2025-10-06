@@ -1,0 +1,17 @@
+---
+import { userRoleOptions, type UserRole } from "@schema/user.schema";
+
+export interface Props {
+    name: string;
+    role: UserRole;
+}
+const { name, role } = Astro.props as Props;
+---
+
+<div class="sidebar-header">
+    <div class="overlay"></div>
+    <div class="user-info">
+        <div class="user-name">{name}</div>
+        <div class="user-role">{userRoleOptions[role]}</div>
+    </div>
+</div>

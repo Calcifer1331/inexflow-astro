@@ -1,1 +1,13 @@
-@import "tailwindcss";
+@import url(Base.css);
+@import url(Variables.css);
+@import url(Sidebar.css);
+@import url(Botones.css);
+@import url(Cards.css);
+
+.tab-content {
+    display: none;
+}
+
+.tab-content:target {
+    display: block;
+}

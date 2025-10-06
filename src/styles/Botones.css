@@ -1,0 +1,62 @@
+.btn {
+  border: none;
+  padding: 6px 10px;
+  border-radius: var(--btn-radius);
+  font-size: var(--btn-small);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Crear */
+.btn-create {
+  background: var(--btn-create-bg);
+  color: var(--btn-create-color);
+}
+.btn-create:hover {
+  background: var(--btn-create-hover);
+}
+
+/* Ver */
+.btn-view {
+  background: var(--btn-view-bg);
+  color: var(--btn-view-color);
+}
+.btn-view:hover {
+  background: var(--btn-view-hover);
+}
+
+/* Editar */
+.btn-edit {
+  background: var(--btn-edit-bg);
+  color: var(--btn-edit-color);
+}
+.btn-edit:hover {
+  background: var(--btn-edit-hover);
+}
+
+/* Eliminar */
+.btn-delete {
+  background: var(--btn-delete-bg);
+  color: var(--btn-delete-color);
+}
+.btn-delete:hover {
+  background: var(--btn-delete-hover);
+  color: #fff;
+}
+
+.btn-negative {
+background: var(--btn-negative-bg);
+color: var(--btn-negative-color);
+border: 1px solid var(--btn-negative-color);
+border-radius: var(--btn-radius-lg);
+padding: 8px 16px;
+font-size: var(--medium-size);
+}
+.btn-negative:hover {
+background: var(--btn-negative-hover);
+color: var(--btn-negative-hover-color);
+}
